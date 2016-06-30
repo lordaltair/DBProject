@@ -19,6 +19,8 @@ import java.net.Socket;
  * Created by Ali on 6/30/2016.
  */
 public class LoginPage {
+    public JPanel LoginPanel;
+
     private JTextField usernameTextField;
     private JTextField passwordTextField;
     private JButton loginButton;
@@ -27,7 +29,6 @@ public class LoginPage {
     private String Password;
 
     public LoginPage() throws IOException {
-
         Socket clientSocket = new Socket("localhost", 6789);
         DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
         DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
@@ -49,10 +50,12 @@ public class LoginPage {
                         modifiedsentence = jsontonormallogin(modifiedsentence);
 
                         //inja khoorooji ra hatman check bokonam ke chi miad agar ack bood
-                        if (modifiedsentence.equals("{\"1\":true}")) {
+                        modifiedsentence.trim();
+                        if (modifiedsentence.equals("{\"Ack\":true}") || modifiedsentence.equals("{\"Ack\": true}")) {
                             outToServer.close();
                             inFromServer.close();
-                            new Client(clientSocket);
+                            new First();
+                            new Client(clientSocket , Username);
                         } else {
                             String infoMessage = "Wrong Username Or Password! Try Again";
                             String TitleMessaage = "Wrong username or password";
@@ -90,5 +93,9 @@ public class LoginPage {
         obj.put("password",password);
 
         return obj;
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }

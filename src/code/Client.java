@@ -10,7 +10,7 @@ import java.net.Socket;
  */
 public class Client {
 
-    public Client(Socket clientSocket) throws IOException {
+    public Client(Socket clientSocket , String username) throws IOException {
         //initial variables
         String modifiedSentence = null;
         String clientname = null;
