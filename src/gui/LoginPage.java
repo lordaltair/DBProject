@@ -51,9 +51,11 @@ public class LoginPage {
                         modifiedsentence = inFromServer.readUTF();
                         modifiedsentence = jsontonormallogin(modifiedsentence);
 
-                        //inja khoorooji ra hatman check bokonam ke chi miad agar ack bood
                         modifiedsentence.trim();
-                        if (modifiedsentence.equals("{\"Ack\":true}") || modifiedsentence.equals("{\"Ack\": true}")) {
+                        StringBuilder sb = new StringBuilder(modifiedsentence);
+                        sb.deleteCharAt(0);
+                        sb.deleteCharAt(sb.length()-1);
+                        if (modifiedsentence.equals("true")) {
                             outToServer.close();
                             inFromServer.close();
                             new First();
@@ -79,8 +81,8 @@ public class LoginPage {
         try {
             Object obj = parser.parse(sendrecievestr);
             JSONArray array = (JSONArray)obj;
-            StringWriter out = new StringWriter();
-            result = array.get(0).toString();
+            JSONObject obj2 = (JSONObject)array.get(0);
+            result = obj2.get("ack").toString();
         } catch (ParseException e) {
             e.printStackTrace();
         }
