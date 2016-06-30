@@ -8,3 +8,23 @@ public class FriendList
     private Group[] groups;
     private Chanel[] chanels;
 }
+
+//{
+//    "user":"Danial",
+//    "friends":
+//    [
+//        {"username":"alim","name":"ali"},
+//        {"username":"alim2","name":"ali2"}
+//    ],
+//    "unknownFriends" : null,
+//    "groups" :
+//    [
+//        {"title" : "ceit", "members" :
+//            [
+//                {"username":"alim","name":"ali"},
+//                {"username":"alim2","name":"ali2"}
+//            ]
+//        }
+//    ],
+//    "chanels" : null
+//}
