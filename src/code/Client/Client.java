@@ -1,13 +1,10 @@
-package code;
+package code.Client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-/**
- * Created by Ali on 6/30/2016.
- */
 public class Client {
 
     public Client(Socket clientSocket , String username) throws IOException {

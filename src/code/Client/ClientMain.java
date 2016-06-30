@@ -1,11 +1,12 @@
-package code;
+package code.Client;
 
 import gui.LoginPage;
 
 import javax.swing.*;
 import java.io.IOException;
 
-public class Main {
+public class ClientMain
+{
 
     public static void main(String[] args) throws IOException {
 //        new LoginPage();
