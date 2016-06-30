@@ -11,4 +11,14 @@ public class Mention
     {
         this.location = location;
     }
+
+    public BasicChat getLocation()
+    {
+        return location;
+    }
+
+    public void setLocation(BasicChat location)
+    {
+        this.location = location;
+    }
 }
