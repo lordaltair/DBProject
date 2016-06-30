@@ -3,7 +3,7 @@ package code;
 public class COMMAND_CODES
 {
     private static int i = 0;
-    public static final int GET_FREIND_LIST = i++; // -
+    public static final int GET_FRIEND_LIST = i++; // -
     public static final int START_CHAT = i++; // GROUP OR USER OR ....
     public static final int UNFRIEND = i++; // USER
     public static final int MORE_MESSAGE = i++; // TIME, GROUP OR USER OR ....

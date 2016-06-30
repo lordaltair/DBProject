@@ -12,26 +12,39 @@ import org.json.simple.parser.ParseException;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.Socket;
 
 public class Client {
-
+    FriendList friendlist;
+    String clientname;
     public Client(Socket clientSocket , String username) throws IOException {
         //initial variables
         String modifiedSentence = null;
-        String clientname = null;
+        this.clientname = username;
         DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
         DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
 
-        modifiedSentence = "getfriendlist";
+        JSONObject obj = new JSONObject();
+        obj.put("command" , "1");
+        obj.put("args" , null);
+
+        StringWriter out = new StringWriter();
+        obj.writeJSONString(out);
+        modifiedSentence = out.toString();
+
         outToServer.writeUTF(modifiedSentence);
         outToServer.flush();
 
         FriendList fl = new FriendList();
         inFromServer.readUTF();
 
-        FriendList friendlist = new FriendList();
+        friendlist = new FriendList();
         friendlist = normaltojsonfriendlist(modifiedSentence , username);
+
+        //insert kardan friendlist be UI
+
+
     }
 
     private FriendList normaltojsonfriendlist(String str ,String username) {
