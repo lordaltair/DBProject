@@ -29,9 +29,11 @@ public class LoginPage {
     private String Password;
 
     public LoginPage() throws IOException {
+
         Socket clientSocket = new Socket("localhost", 6789);
         DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
         DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
+
         while(true) {
             loginButton.addActionListener(new ActionListener() {
                 @Override
