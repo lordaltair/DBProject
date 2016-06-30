@@ -1,8 +1,5 @@
 package code;
 
-/**
- * Created by danial on 6/30/16.
- */
 public class COMMAND_CODES
 {
     private static int i = 0;
