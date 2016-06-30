@@ -8,4 +8,14 @@ public class Group extends BasicChat
     {
         this.members = members;
     }
+
+    public User[] getMembers()
+    {
+        return members;
+    }
+
+    public void setMembers(User[] members)
+    {
+        this.members = members;
+    }
 }

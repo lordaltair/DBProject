@@ -8,4 +8,14 @@ public class Conversation
     {
         this.messages = messages;
     }
+
+    public Message[] getMessages()
+    {
+        return messages;
+    }
+
+    public void setMessages(Message[] messages)
+    {
+        this.messages = messages;
+    }
 }
