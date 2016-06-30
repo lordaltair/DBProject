@@ -10,18 +10,14 @@ import java.net.Socket;
  */
 public class Client {
 
-    public Client() throws IOException {
+    public Client(Socket clientSocket) throws IOException {
         //initial variables
         String modifiedSentence = null;
         String clientname = null;
-        Socket clientSocket = new Socket("localhost", 6789);
         DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
         DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
 
-        String tmp = clientname + ",HELLO";
-        tmp = normaltojson(tmp);
-        outToServer.writeUTF(tmp);
-        outToServer.flush();
+        modifiedSentence = inFromServer.readUTF();
 
     }
 
