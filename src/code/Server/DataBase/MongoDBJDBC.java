@@ -35,19 +35,26 @@ public class MongoDBJDBC
 
     void retriveAllDoc()
     {
-        MongoClient mongoClient = new MongoClient("localhost", 27017);
-        DB db = mongoClient.getDB("test");
+        try {
+            MongoClient mongoClient = new MongoClient("localhost", 27017);
+            DB db = mongoClient.getDB("test");
 
 //            boolean auth = db
 //                    .authenticate("myUserName", "myPassword".toCharArray());
-        DBCollection coll = db.getCollection("mycol");
-        DBCursor cursor = coll.find();
-        int i = 1;
-        while (cursor.hasNext())
+            DBCollection coll = db.getCollection("mycol");
+            DBCursor cursor = coll.find();
+            int i = 1;
+            while (cursor.hasNext())
+            {
+                System.out.println("Inserted Document: " + i);
+                System.out.println(cursor.next());
+                i++;
+            }
+
+        }
+        catch (Exception e)
         {
-            System.out.println("Inserted Document: " + i);
-            System.out.println(cursor.next());
-            i++;
+            e.printStackTrace();
         }
 
     }
@@ -153,20 +160,40 @@ public class MongoDBJDBC
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
-    void add_a_massage_to_chat (BasicDBObject a, BasicDBObject b, String message)
+    public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
     {
         try {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
             DB db = mongoClient.getDB("Test");
             System.out.println("Connect to database successfully");
             DBCollection coll = db.getCollection("Chat");
-            BasicDBObject fields = new BasicDBObject();
+//            BasicDBObject fields = new BasicDBObject();
             BasicDBObject whereQuery = new BasicDBObject();
-            fields.put("A",a.get("UserName"));
-            fields.put("B",b.get("UserName"));
-            DBCursor cursor = coll.find(whereQuery, fields);
-
-
+            whereQuery.put("A",a.get("UserName"));
+            whereQuery.put("B",b.get("UserName"));
+            DBCursor cursor = coll.find(whereQuery);
+            if (cursor.hasNext())//I think it means we found a true document
+            {
+                DBObject tmp = cursor.next();
+                DBObject listItem = new BasicDBObject("Messages", new BasicDBObject("Message",message)
+                        .append("$currentDate", new BasicDBObject("Time", true)));
+                DBObject updateQuery = new BasicDBObject("$push", listItem);
+                coll.update(tmp, updateQuery);
+                return;
+            }
+            whereQuery = new BasicDBObject();
+            whereQuery.put("A",b.get("UserName"));
+            whereQuery.put("B",a.get("UserName"));
+            cursor= coll.find(whereQuery);
+            if (cursor.hasNext())
+            {
+                DBObject tmp = cursor.next();
+                DBObject listItem = new BasicDBObject("Messages", new BasicDBObject("Message",message)
+                        .append("$currentDate", new BasicDBObject("Time", true)));
+                DBObject updateQuery = new BasicDBObject("$push", listItem);
+                coll.update(tmp, updateQuery);
+                return;
+            }
 
 
 
