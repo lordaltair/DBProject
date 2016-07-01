@@ -41,7 +41,13 @@ public class MongoDBJDBC
     public void retriveAllDoc()
     {
         MongoClient mongoClient = null;
-        mongoClient = new MongoClient("localhost", 27017);
+        try
+        {
+            mongoClient = new MongoClient("localhost", 27017);
+        } catch (UnknownHostException e)
+        {
+            e.printStackTrace();
+        }
         DB db = mongoClient.getDB("test");
 
 //            boolean auth = db
@@ -204,7 +210,7 @@ public class MongoDBJDBC
             DB db = mongoClient.getDB("Test");
             System.out.println("Connect to database successfully");
             DBCollection coll = db.getCollection("Chat");
-//            BasicDBObject fields = new BasicDBObject();
+            BasicDBObject fields = new BasicDBObject();
             BasicDBObject whereQuery = new BasicDBObject();
             whereQuery.put("A",a.get("UserName"));
             whereQuery.put("B",b.get("UserName"));
@@ -258,7 +264,13 @@ public class MongoDBJDBC
     public String find_username_pass(String username)
     {
         MongoClient mongoClient = null;
-        mongoClient = new MongoClient("localhost", 27017);
+        try
+        {
+            mongoClient = new MongoClient("localhost", 27017);
+        } catch (UnknownHostException e)
+        {
+            e.printStackTrace();
+        }
         DB db = mongoClient.getDB("test");
         System.out.println("Connect to database successfully");
         DBCollection coll = db.getCollection("User");
