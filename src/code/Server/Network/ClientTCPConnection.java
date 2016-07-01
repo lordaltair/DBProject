@@ -29,10 +29,19 @@ public class ClientTCPConnection implements Runnable
             try
             {
                 String msg = inFromClient.readUTF();
+                System.out.println("received:\t" + msg);
                 commandParser.parse(msg, this);
             } catch (IOException e)
             {
                 e.printStackTrace();
+                try
+                {
+                    inFromClient.close();
+                    return;
+                } catch (IOException e1)
+                {
+                    e1.printStackTrace();
+                }
             }
         }
     }
@@ -42,10 +51,19 @@ public class ClientTCPConnection implements Runnable
         try
         {
             obj.writeJSONString(new StringWriter());
+            System.out.println("to send:\t" + obj.toString());
             outToClient.writeUTF(obj.toString());
         } catch (IOException e)
         {
             e.printStackTrace();
+            try
+            {
+                inFromClient.close();
+                return;
+            } catch (IOException e1)
+            {
+                e1.printStackTrace();
+            }
         }
 
     }

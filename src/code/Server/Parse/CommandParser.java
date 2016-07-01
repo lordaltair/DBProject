@@ -35,8 +35,8 @@ public class CommandParser
             methods[COMMAND_CODES.CLIENT_MENTION] = CommandParser.class.getMethod("CLIENT_MENTION", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.SERVER_MENTION] = CommandParser.class.getMethod("SERVER_MENTION", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.CLIENT_UNMENTION] = CommandParser.class.getMethod("CLIENT_UNMENTION", JSONObject.class, ClientTCPConnection.class);
-            methods[COMMAND_CODES.SEARCH_QUERY] = CommandParser.class.getMethod("SEARCH", JSONObject.class, ClientTCPConnection.class);
-            methods[COMMAND_CODES.SEARCH_USER] = CommandParser.class.getMethod("SEARCH", JSONObject.class, ClientTCPConnection.class);
+            methods[COMMAND_CODES.SEARCH_QUERY] = CommandParser.class.getMethod("SEARCH_QUERY", JSONObject.class, ClientTCPConnection.class);
+            methods[COMMAND_CODES.SEARCH_USER] = CommandParser.class.getMethod("SEARCH_USER", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.ADD_TO_FREIND_LIST] = CommandParser.class.getMethod("ADD_TO_FREIND_LIST", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.CREATE_GROUP] = CommandParser.class.getMethod("CREATE_GROUP", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.LEAVE_GROUP] = CommandParser.class.getMethod("LEAVE_GROUP", JSONObject.class, ClientTCPConnection.class);
@@ -46,7 +46,6 @@ public class CommandParser
             methods[COMMAND_CODES.SIGN_UP] = CommandParser.class.getMethod("SIGN_UP", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.LOGIN] = CommandParser.class.getMethod("LOGIN", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.LOGOUT] = CommandParser.class.getMethod("LOGOUT", JSONObject.class, ClientTCPConnection.class);
-            methods[COMMAND_CODES.NUMBER_OF_COMMANDS] = CommandParser.class.getMethod("NUMBER_OF_COMMANDS", JSONObject.class, ClientTCPConnection.class);
         } catch (NoSuchMethodException e)
         {
             e.printStackTrace();
@@ -67,7 +66,7 @@ public class CommandParser
         {
             JSONObject obj = (JSONObject) parser.parse(command);
             int commCode = Integer.parseInt(String.valueOf(obj.get("command")));
-            methods[commCode].invoke(this, obj.get("args"), clientTCPConnection);
+            methods[commCode].invoke(this, obj.get("arg"), clientTCPConnection);
         } catch (ParseException e)
         {
             e.printStackTrace();
@@ -205,7 +204,7 @@ public class CommandParser
         LoginInfo loginInfo = new LoginInfo();
         loginInfo.parsJsonObj((JSONObject) args.get(loginInfo.getClass().getName().toLowerCase()));
         String pass = null;
-        dbManager.find_username_pass(loginInfo.getUsername());
+        pass = dbManager.find_username_pass(loginInfo.getUsername());
         JSONObject response = new JSONObject();
         boolean accepted = false;
         if (pass.equalsIgnoreCase(loginInfo.getPassword()))

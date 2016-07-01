@@ -36,12 +36,16 @@ public class LoginInfo implements JsonParsable{
     @Override
     public JSONObject toJsonObj()
     {
-        return null;
+        JSONObject result = new JSONObject();
+        result.put("username", username);
+        result.put("password", password);
+        return result;
     }
 
     @Override
     public void parsJsonObj(JSONObject obj)
     {
-
+        username = (String) obj.get("username");
+        password = (String) obj.get("password");
     }
 }
