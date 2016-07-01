@@ -202,12 +202,12 @@ public class CommandParser
     public void LOGIN(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
         LoginInfo loginInfo = new LoginInfo();
-        loginInfo.parsJsonObj((JSONObject) args.get(loginInfo.getClass().getName().toLowerCase()));
+        loginInfo.parsJsonObj((JSONObject) args.get("logininfo"));
         String pass = null;
         pass = dbManager.find_username_pass(loginInfo.getUsername());
         JSONObject response = new JSONObject();
         boolean accepted = false;
-        if (pass.equalsIgnoreCase(loginInfo.getPassword()))
+        if (pass != null && pass.equalsIgnoreCase(loginInfo.getPassword()))
         {
             clientTCPConnection.setUser(new User("", loginInfo.getUsername()));
             accepted = true;

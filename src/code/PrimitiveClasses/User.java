@@ -40,12 +40,16 @@ public class User implements JsonParsable
     @Override
     public JSONObject toJsonObj()
     {
-        return null;
+        JSONObject result = new JSONObject();
+        result.put("name", name);
+        result.put("username", username);
+        return result;
     }
 
     @Override
     public void parsJsonObj(JSONObject obj)
     {
-
+        name = obj.get("name").toString();
+        username = obj.get("username").toString();
     }
 }
