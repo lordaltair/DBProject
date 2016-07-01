@@ -29,6 +29,7 @@ public class LoginPage {
     private String Username;
     private String Password;
 
+<<<<<<< HEAD
     public LoginPage() throws IOException {
 
         final Socket clientSocket = new Socket("localhost", 6789);
@@ -36,6 +37,18 @@ public class LoginPage {
         final DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
 
         while(true) {
+=======
+    public LoginPage()
+    {
+
+        Socket clientSocket = null;
+        try
+        {
+            clientSocket = new Socket("localhost", 6789);
+            DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+            DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
+            final Socket finalClientSocket = clientSocket;
+>>>>>>> origin/master
             loginButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -59,7 +72,7 @@ public class LoginPage {
                             outToServer.close();
                             inFromServer.close();
                             new First();
-                            new Client(clientSocket , Username);
+                            new Client(finalClientSocket, Username);
                         } else {
                             String infoMessage = "Wrong Username Or Password! Try Again";
                             String TitleMessaage = "Wrong username or password";
@@ -71,7 +84,12 @@ public class LoginPage {
 
                 }
             });
+        } catch (IOException e)
+        {
+            e.printStackTrace();
         }
+
+
     }
 
     private String signup(String me,Profile profile) throws IOException {
@@ -120,6 +138,6 @@ public class LoginPage {
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
+
     }
 }

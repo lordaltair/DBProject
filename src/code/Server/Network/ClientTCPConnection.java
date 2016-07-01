@@ -20,7 +20,7 @@ public class ClientTCPConnection implements Runnable
                 System.out.println("Received: " + clientSentence);
                 capitalizedSentence = clientSentence.toUpperCase() + '\n';
                 outToClient.writeBytes(capitalizedSentence);
-            } catch (IOException e)
+            } catch (Exception e)
             {
                 e.printStackTrace();
             }
