@@ -1,5 +1,6 @@
 package code.Server.DataBase;
 
+import code.PrimitiveClasses.User;
 import com.mongodb.*;
 
 import java.net.UnknownHostException;
@@ -188,14 +189,33 @@ public class MongoDBJDBC
 
             BasicDBObject whereQuery = new BasicDBObject();
             whereQuery.put("UserName", UserName);
-            BasicDBObject fields = new BasicDBObject("_id", "1");
-            DBCursor cursor = coll.find(whereQuery, fields);
-            //TODO: what next?
+            // BasicDBObject fields = new BasicDBObject("UserName", "1");
+            DBCursor cursor = coll.find(whereQuery);
+            if (!cursor.hasNext())
+            {
+                System.err.println("This user can not be found");
+                return null;
+            }
 
+            DBObject res = cursor.next();
+            BasicDBList list = (BasicDBList) res.get("Friend IDs");
+            int sizeOfList = list.size();
+            User [] result = new User[sizeOfList];
+            int index=0;
+            for (Object element : list)
+            {
+                User tmp= new User();
+                tmp.setUsername((String)element);
+                result[index]=tmp;
+                index++;
+            }
+
+            return  result;
 
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
+        return null;
     }
     public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
     {
