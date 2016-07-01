@@ -83,7 +83,7 @@ public class FriendList implements JsonParsable
         User[] friends = new User[arrayfriends.size()];
         for(int i=0;i < arrayfriends.size();i++) {
             JSONObject objuser = (JSONObject)arrayfriends.get(i);
-            friends[i].setUsername(objuser.get("username").toString());
+            friends[i].setUsername(objuser.get("user").toString());
             friends[i].setName(objuser.get("name").toString());
         }
        setFriends(friends);
@@ -92,7 +92,7 @@ public class FriendList implements JsonParsable
         User[] unknown = new User[arrayunknown.size()];
         for(int i=0;i < arrayunknown.size();i++) {
             JSONObject objuser = (JSONObject)arrayunknown.get(i);
-            unknown[i].setUsername(objuser.get("username").toString());
+            unknown[i].setUsername(objuser.get("user").toString());
             unknown[i].setName(objuser.get("name").toString());
         }
         setUnknownFriends(unknown);
@@ -120,16 +120,16 @@ public class FriendList implements JsonParsable
 //    "user":"Danial",
 //    "friends":
 //    [
-//        {"username":"alim","name":"ali"},
-//        {"username":"alim2","name":"ali2"}
+//        {"user":"alim","name":"ali"},
+//        {"user":"alim2","name":"ali2"}
 //    ],
 //    "unknownFriends" : null,
 //    "groups" :
 //    [
 //        {"title" : "ceit", "members" :
 //            [
-//                {"username":"alim","name":"ali"},
-//                {"username":"alim2","name":"ali2"}
+//                {"user":"alim","name":"ali"},
+//                {"user":"alim2","name":"ali2"}
 //            ]
 //        }
 //    ],

@@ -12,10 +12,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.Socket;
 import java.sql.Time;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 import static code.COMMAND_CODES.*;
 
@@ -34,18 +30,46 @@ public class Client {
         outToServer.writeUTF(modifiedSentence);
         outToServer.flush();
 
-        inFromServer.readUTF();
+        modifiedSentence = inFromServer.readUTF();
+
+        JSONParser parser=new JSONParser();
+        Object obj = null;
+        try {
+            obj = parser.parse(modifiedSentence);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        JSONObject jsonobj = (JSONObject) obj;
 
         friendlist = new FriendList();
-        friendlist.parsJsonObj();
+        friendlist.parsJsonObj(jsonobj);
 
         //insert kardan friendlist be UI
         // va sepas kole ui ra inja neshan bedahim
 
     }
 
-    private FriendList jsontonormalfriendlist(String str ,String username) {
-//
+    private Time getmessage(String str) throws IOException {
+        Message[] messages;
+        JSONParser parser=new JSONParser();
+        Time lasttime = null;
+        try {
+            Object obj = parser.parse(str);
+            JSONArray array = (JSONArray) obj;
+            messages= new Message[array.size()];
+            for(int i=0;i<array.size();i++) {
+                Message message = new Message(null);
+                JSONObject objmessage = (JSONObject) array.get(i);
+                message.parsJsonObj(objmessage);
+                messages[i] = message;
+            }
+            lasttime = messages[messages.length].getTimeSent();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // ferestadane messages be UI va neshan dadan payam ha
+        return lasttime;
     }
 
     private String getfriendlist() throws IOException {
@@ -68,13 +92,13 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        JSONObject object = new JSONObject();
-        object.put("username", username);
-        JSONArray array = new JSONArray();
-        array.add(object);
+        User user = new User();
+        user.setUsername(username);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
 
         obj.put("command" , START_CHAT);
-        obj.put("arg" , array);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -83,57 +107,29 @@ public class Client {
         // safe kari badesh biad ke bere toye chat
     }
 
-    private Time getmessage(String str) throws IOException {
-        String result;
-        Message[] messages;
-        JSONParser parser=new JSONParser();
-        Time lasttime = null;
-        try {
-            Object obj = parser.parse(str);
-            JSONArray array = (JSONArray) obj;
-            messages= new Message[array.size()];
-            for(int i=0;i<array.size();i++) {
-                Message message = new Message(null);
-                JSONObject objmessage = (JSONObject) array.get(i);
-                User sender = new User(objmessage.get("name").toString(),null);
-                String strtime = objmessage.get("timeSent").toString();
-                Time time = Time.valueOf(strtime);
-                message.setMsg(objmessage.get("msg").toString());
-                message.setSender(sender);
-                message.setTimeSent(time);
-                messages[i] = message;
-            }
-            lasttime = messages[messages.length].getTimeSent();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        // ferestadane messages be UI va neshan dadan payam ha
-        return lasttime;
-    }
     private String unfriend(String username) throws IOException {
         String result;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        JSONObject object = new JSONObject();
-        object.put("username", username);
-        JSONArray array = new JSONArray();
-        array.add(object);
+        User user = new User();
+        user.setUsername(username);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
 
         obj.put("command" , UNFRIEND);
-        obj.put("arg" , array);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
         return result;
     }
 
-    private void setfriendlist(String me, String str) throws IOException {
+    private void setfriendlist(JSONObject obj) throws IOException {
         String result = null;
 
         friendlist = new FriendList();
-        friendlist = jsontonormalfriendlist(str , me);
+        friendlist.parsJsonObj(obj);
 
         //insert kardan friendlist be UI
         // va sepas kole ui ra inja neshan bedahim
@@ -145,14 +141,18 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        JSONObject object = new JSONObject();
-        object.put("username", username);
-        object.put("time" , time);
-        JSONArray array = new JSONArray();
-        array.add(object);
+        User user = new User();
+        user.setUsername(username);
+
+        MoreMessage mm = new MoreMessage();
+        mm.setUser(user);
+        mm.setLasttime(time);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
+        args.put("time", time);
 
         obj.put("command" , MORE_MESSAGE);
-        obj.put("arg" , array);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -164,13 +164,13 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        JSONObject object = new JSONObject();
-        object.put("username", username);
-        JSONArray array = new JSONArray();
-        array.add(object);
+        User user = new User();
+        user.setUsername(username);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
 
         obj.put("command" , GET_PROFILE_DETAIL);
-        obj.put("arg" , array);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -182,13 +182,13 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        JSONObject object = new JSONObject();
-        object.put("username", username);
-        JSONArray array = new JSONArray();
-        array.add(object);
+        User user = new User();
+        user.setUsername(username);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
 
         obj.put("command" , REPORT);
-        obj.put("arg" , array);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -200,15 +200,16 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        JSONObject object = new JSONObject();
-        object.put("username", username);
-        object.put("msg",str);
-        object.put("time",time);
-        JSONArray array = new JSONArray();
-        array.add(object);
+        User user = new User();
+        user.setUsername(username);
+        Message m = new Message(str);
+        m.setSender(user);
+        m.setTimeSent(time);
+        JSONObject args = new JSONObject();
+        args.put("message", m);
 
         obj.put("command" , CLIENT_SEND_NEW_MSG);
-        obj.put("arg" , array);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -220,14 +221,14 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        JSONObject object = new JSONObject();
-        object.put("username", username);
-        object.put("time",deletetime);
-        JSONArray array = new JSONArray();
-        array.add(object);
+        User user = new User();
+        user.setUsername(username);
+        PrivateChat pv = new PrivateChat(user,deletetime);
+        JSONObject args = new JSONObject();
+        args.put("privatechat", pv);
 
         obj.put("command" , START_PV_CHAT);
-        obj.put("arg" , array);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -249,14 +250,18 @@ public class Client {
 //        return result;
 //    }
 
-    private String clientmention(String me,String username) throws IOException {
+    private String clientmention(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 12);
-        obj.put("arg1" , me);
-        obj.put("arg2" , username);
+        User user = new User();
+        user.setUsername(username);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
+
+        obj.put("command" , CLIENT_MENTION);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -268,8 +273,13 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 14);
-        obj.put("arg1" , username);
+        User user = new User();
+        user.setUsername(username);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
+
+        obj.put("command" , SEARCH_USER);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();

@@ -11,6 +11,10 @@ public class Profile implements JsonParsable
     private String phoneNumber;
     private String bioDescription;
 
+    public Profile()
+    {
+    }
+
     public Profile(User user, String lastName, String password, String email, String phoneNumber, String bioDescription)
     {
         this.user = user;
@@ -87,14 +91,22 @@ public class Profile implements JsonParsable
         JSONObject result = new JSONObject();
         result.put("user", user.toJsonObj());
         result.put("lastname", lastName);
-        result.put("data", result);
-        //todo
-        return null;
+        result.put("password", password);
+        result.put("email", email);
+        result.put("phonenumber", phoneNumber);
+        result.put("bioDescription", bioDescription);
+        return result;
     }
 
     @Override
     public void parsJsonObj(JSONObject obj)
     {
-
+        user = new User();
+        user.parsJsonObj((JSONObject) obj.get("user"));
+        lastName = (String) obj.get("lastname");
+        password = (String) obj.get("password");
+        email = (String) obj.get("email");
+        phoneNumber = (String) obj.get("phonenumber");
+        bioDescription = (String) obj.get("bioDescription");
     }
 }
