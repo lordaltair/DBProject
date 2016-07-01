@@ -1,6 +1,7 @@
 package gui;
 
 import code.Client.Client;
+import code.PrimitiveClasses.Profile;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -41,11 +42,10 @@ public class LoginPage {
                     Username = usernameTextField.getText();
                     Password = passwordTextField.getText();
 
-                    JSONObject sendrecievejson = normaltojsonlogin(Username, Password);
                     try {
-                        String modifiedsentence = null;
+                        String modifiedsentence = login(Username,Password);
 
-                        outToServer.writeUTF(sendrecievejson.toJSONString());
+                        outToServer.writeUTF(modifiedsentence);
                         outToServer.flush();
 
                         modifiedsentence = inFromServer.readUTF();
@@ -74,29 +74,49 @@ public class LoginPage {
         }
     }
 
+    private String signup(String me,Profile profile) throws IOException {
+        String result = null;
+        JSONObject obj = new JSONObject();
+        StringWriter out = new StringWriter();
+
+        obj.put("command" , 22);
+        obj.put("arg1" , me);
+        obj.put("arg2" , profile);
+
+        obj.writeJSONString(out);
+        result = out.toString();
+        return result;
+    }
+
+    private String login(String username,String password) throws IOException {
+        String result = null;
+        JSONObject obj = new JSONObject();
+        StringWriter out = new StringWriter();
+
+        obj.put("command" , 23);
+        obj.put("arg1" , username);
+        obj.put("arg2" , password);
+
+        obj.writeJSONString(out);
+        result = out.toString();
+        return result;
+    }
+
+
     private String jsontonormallogin(String sendrecievestr) {
         String result = null;
-        JSONParser parser=new JSONParser();
+        JSONParser parser = new JSONParser();
 
         try {
             Object obj = parser.parse(sendrecievestr);
-            JSONArray array = (JSONArray)obj;
-            JSONObject obj2 = (JSONObject)array.get(0);
+            JSONArray array = (JSONArray) obj;
+            JSONObject obj2 = (JSONObject) array.get(0);
             result = obj2.get("ack").toString();
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         return result;
-    }
-
-    private JSONObject normaltojsonlogin(String username, String password) {
-        JSONObject obj = new JSONObject();
-
-        obj.put("username", username);
-        obj.put("password",password);
-
-        return obj;
     }
 
     private void createUIComponents() {
