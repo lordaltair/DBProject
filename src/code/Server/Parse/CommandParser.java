@@ -82,13 +82,15 @@ public class CommandParser
 
     public void GET_FRIEND_LIST(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-        //todo get friend list from mongodb
         FriendList friendList = new FriendList();
+        //todo get friend list from mongodb
         clientTCPConnection.send(friendList.toJsonObj());
     }
 
     public void START_CHAT(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
+        User user = new User();
+        user.parsJsonObj((JSONObject) args.get("user"));
 
     }
 
@@ -159,7 +161,13 @@ public class CommandParser
 
     public void ADD_TO_FREIND_LIST(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        User friend = new User();
+        friend.parsJsonObj((JSONObject) args.get("user"));
+        // TODO: 7/1/16 add to db
+//        dbManager.add_a_friend(clientTCPConnection.getUser().getUsername(), friend.getUsername());
+        FriendList friendList = null;
+        // TODO: 7/1/16 get friend list
+        clientTCPConnection.send(friendList.toJsonObj());
     }
 
     public void CREATE_GROUP(JSONObject args, ClientTCPConnection clientTCPConnection)
