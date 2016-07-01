@@ -2,6 +2,7 @@ package code.Server.Network;
 
 import code.PrimitiveClasses.User;
 import code.Server.Parse.CommandParser;
+import com.google.gson.Gson;
 import org.json.simple.JSONObject;
 
 import java.io.*;
@@ -46,7 +47,8 @@ public class ClientTCPConnection implements Runnable
         }
     }
 
-    synchronized public void send(JSONObject obj)
+
+    synchronized public void sendJsonObj(JSONObject obj)
     {
         try
         {
@@ -55,6 +57,33 @@ public class ClientTCPConnection implements Runnable
             obj.writeJSONString(new StringWriter());
             System.out.println("to send:\t" + obj.toString());
             outToClient.writeUTF(obj.toString());
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+            try
+            {
+                inFromClient.close();
+                return;
+            } catch (IOException e1)
+            {
+                e1.printStackTrace();
+            }
+        }
+
+    }
+
+    synchronized public void sendObject(Object obj)
+    {
+        try
+        {
+            if (obj == null)
+                return;
+            Gson gson = new Gson();
+            String toJson = gson.toJson(obj);
+//            obj.writeJSONString(new StringWriter());
+//            System.out.println("to sendObject:\t" + obj.toString());
+            System.out.println("to send:\t" + toJson);
+            outToClient.writeUTF(toJson);
         } catch (IOException e)
         {
             e.printStackTrace();

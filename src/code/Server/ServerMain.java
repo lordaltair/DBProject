@@ -7,6 +7,6 @@ public class ServerMain
     public static void main(String[] args)
     {
         ServerTCPListener serverTCPListener = new ServerTCPListener();
-        new Thread(serverTCPListener).run();
+        new Thread(serverTCPListener).start();
     }
 }

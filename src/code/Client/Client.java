@@ -1,6 +1,8 @@
 package code.Client;
 
 import code.PrimitiveClasses.*;
+import com.google.gson.Gson;
+import gui.First;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -16,11 +18,16 @@ import java.sql.Time;
 import static code.COMMAND_CODES.*;
 
 public class Client {
+
     FriendList friendlist;
     String clientname;
     Time lassttime;
-    public Client(Socket clientSocket , String username , DataOutputStream outToServer , DataInputStream inFromServer) throws IOException {
+    First ui;
+
+    public Client(Socket clientSocket, String username, DataOutputStream outToServer, DataInputStream inFromServer, First ui) throws IOException
+    {
         //initial variables
+        this.ui = ui;
         String modifiedSentence;
         this.clientname = username;
 
@@ -39,14 +46,33 @@ public class Client {
         }
         JSONObject jsonobj = (JSONObject) obj;
 
-        friendlist = new FriendList();
-        friendlist.parsJsonObj(jsonobj);
+        Gson gson = new Gson();
+        jsonobj.writeJSONString(new StringWriter());
+        this.friendlist = gson.fromJson(jsonobj.toString(), FriendList.class);
+        ui.updateFriendList(friendlist);
+
 
         //insert kardan friendlist be UI
         // va sepas kole ui ra inja neshan bedahim
 
+        //inja ui hazer oomade
+
     }
 
+    private int getdeletetime(String str){
+        JSONParser parser=new JSONParser();
+        int deletetime;
+        Object obj = null;
+        try {
+            obj = parser.parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        JSONObject jsonobj = (JSONObject)obj;
+        String timestr = jsonobj.get("time").toString();
+        deletetime = Integer.parseInt(timestr);
+        return deletetime;
+    }
     private Time getmessage(String str) throws IOException {
         Message[] messages;
         JSONParser parser=new JSONParser();
@@ -68,6 +94,26 @@ public class Client {
 
         // ferestadane messages be UI va neshan dadan payam ha
         return lasttime;
+    }
+
+    private boolean ackjsontonormal(String sendrecievestr) {
+        String result = null;
+        JSONParser parser = new JSONParser();
+
+        try {
+            System.out.println(sendrecievestr);
+            Object obj = parser.parse(sendrecievestr);
+            JSONObject obj2 = (JSONObject) obj;
+            result = obj2.get("ack").toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (result.equals("true")) {
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     private String getfriendlist() throws IOException {
@@ -124,10 +170,6 @@ public class Client {
     }
 
     private void setfriendlist(JSONObject obj) throws IOException {
-        String result = null;
-
-        friendlist = new FriendList();
-        friendlist.parsJsonObj(obj);
 
         //insert kardan friendlist be UI
         // va sepas kole ui ra inja neshan bedahim
@@ -266,6 +308,24 @@ public class Client {
         return result;
     }
 
+    private String clientunmention(String username) throws IOException {
+        String result = null;
+        JSONObject obj = new JSONObject();
+        StringWriter out = new StringWriter();
+
+        User user = new User();
+        user.setUsername(username);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
+
+        obj.put("command" , CLIENT_UNMENTION);
+        obj.put("arg" , args);
+
+        obj.writeJSONString(out);
+        result = out.toString();
+        return result;
+    }
+
     private String searchuser(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
@@ -352,13 +412,14 @@ public class Client {
         return result;
     }
 
-    private String createchannel(Chanel chanel) throws IOException {
+    private String createchannel(Channel channel) throws IOException
+    {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
         JSONObject args = new JSONObject();
-        args.put("channel", chanel);
+        args.put("channel", channel);
 
         obj.put("command" , CREATE_CHANEL);
         obj.put("arg" , args);
@@ -373,7 +434,7 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        Chanel channel = new Chanel(title);
+        Channel channel = new Channel(title);
         JSONObject args = new JSONObject();
         args.put("channel", channel);
 
