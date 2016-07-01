@@ -18,7 +18,7 @@ public class COMMAND_CODES
     public static final int CLIENT_UNMENTION; // USER
     public static final int SEARCH_USER; // SEARCH USER
     public static final int SEARCH_QUERY; // SEARCH QUERY
-    public static final int ADD_TO_FREIND_LIST; // USER
+    public static final int ADD_TO_FRIEND_LIST; // USER
     public static final int CREATE_GROUP; // TITLE, MEMBERS[]
     public static final int LEAVE_GROUP; // GROUP
     public static final int CREATE_CHANEL; // TITLE, MEMBERS[]
@@ -46,7 +46,7 @@ public class COMMAND_CODES
         CLIENT_UNMENTION = i++;
         SEARCH_USER = i++;
         SEARCH_QUERY = i++;
-        ADD_TO_FREIND_LIST = i++;
+        ADD_TO_FRIEND_LIST = i++;
         CREATE_GROUP = i++;
         LEAVE_GROUP = i++;
         CREATE_CHANEL = i++;

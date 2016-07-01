@@ -17,6 +17,7 @@ public class First {
     private JButton moreMessageButton;
     private JButton submitButton;
     private JTextField textField1;
+    public JPanel firstpanel;
 
     private void createUIComponents() {
         // TODO: place custom component creation code here

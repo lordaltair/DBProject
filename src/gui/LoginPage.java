@@ -4,12 +4,12 @@ import code.Client.Client;
 import code.PrimitiveClasses.LoginInfo;
 import code.PrimitiveClasses.Profile;
 import code.PrimitiveClasses.User;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataInputStream;
@@ -33,10 +33,11 @@ public class LoginPage {
     private JButton signInButton;
     private String Username;
     private String Password;
+    private JPanel mainPanel;
 
-    public LoginPage()
+    public LoginPage(JPanel mainPanel)
     {
-
+        this.mainPanel = mainPanel;
         Socket clientSocket = null;
         try
         {
@@ -62,10 +63,14 @@ public class LoginPage {
 
                         modifiedsentence.trim();
                         if (modifiedsentence.equals("true")) {
-                            outToServer.close();
-                            inFromServer.close();
-                            new First();
-                            new Client(finalClientSocket, Username);
+//                            ((CardLayout)mainPanel.getLayout()).next(mainPanel);
+                            mainPanel.setVisible(false);
+                            ((CardLayout)mainPanel.getLayout()).show(mainPanel, "1");
+                            mainPanel.revalidate();
+                            mainPanel.repaint();
+                            mainPanel.setVisible(true);
+
+                            new Client(finalClientSocket, Username , outToServer , inFromServer);
                         } else {
                             String infoMessage = "Wrong Username Or Password! Try Again";
                             String TitleMessaage = "Wrong username or password";
@@ -140,6 +145,7 @@ public class LoginPage {
         StringWriter out = new StringWriter();
 
         JSONObject args = new JSONObject();
+
         args.put("logininfo", logininfo.toJsonObj());
 
         obj.put("command" , LOGIN);
@@ -156,9 +162,9 @@ public class LoginPage {
         JSONParser parser = new JSONParser();
 
         try {
+            System.out.println(sendrecievestr);
             Object obj = parser.parse(sendrecievestr);
-            JSONArray array = (JSONArray) obj;
-            JSONObject obj2 = (JSONObject) array.get(0);
+            JSONObject obj2 = (JSONObject) obj;
             result = obj2.get("ack").toString();
         } catch (ParseException e) {
             e.printStackTrace();
