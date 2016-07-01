@@ -1,6 +1,9 @@
 package code.PrimitiveClasses;
 
-public class Group extends BasicChat
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+public class Group extends BasicChat implements JsonParsable
 {
     public User[] getMemmbers() {
         return memmbers;
@@ -14,5 +17,22 @@ public class Group extends BasicChat
     public Group(String title)
     {
         super(title);
+    }
+
+    @Override
+    public JSONObject toJsonObj() {
+        return null;
+    }
+
+    @Override
+    public void parsJsonObj(JSONObject obj) {
+        Group group = new Group(obj.get("title").toString());
+            JSONArray membersarray = (JSONArray) obj.get("members");
+        User[] thismembers = new User[membersarray.size()];
+        for(int i=0; i<membersarray.size();i++){
+            thismembers[i].setUsername(membersarray.get(i).toString());
+        }
+            group.setMemmbers(thismembers);
+
     }
 }
