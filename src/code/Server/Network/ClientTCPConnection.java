@@ -50,6 +50,8 @@ public class ClientTCPConnection implements Runnable
     {
         try
         {
+            if (obj == null)
+                return;
             obj.writeJSONString(new StringWriter());
             System.out.println("to send:\t" + obj.toString());
             outToClient.writeUTF(obj.toString());
