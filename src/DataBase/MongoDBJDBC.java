@@ -11,6 +11,7 @@ import com.mongodb.DBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBCollection;
 import com.mongodb.ServerAddress;
+import org.bson.types.ObjectId;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -110,14 +111,52 @@ public class MongoDBJDBC {
 
     }
 
-
-
+    void add_a_user(String FirstName, String LastName, String UserName,
+                    String Password, String Email, long phone, String biography)
+    {
+        try {
+            MongoClient mongoClient = new MongoClient("localhost", 27017);
+            DB db = mongoClient.getDB("test");
+            System.out.println("Connect to database successfully");
+            DBCollection coll = db.getCollection("User");
+            System.out.println("Collection User selected successfully");
+            BasicDBObject doc = new BasicDBObject("UserName", UserName)
+                    .append("Password", Password)
+                    .append("FirstName", FirstName)
+                    .append("LastName", LastName)
+                    .append("Email", Email)
+                    .append("Phone", phone)
+                    .append("biography", biography);
+            coll.insert(doc);
+            System.out.println("Document inserted successfully");
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+    void add_a_friend(ObjectId a, ObjectId b)
+    {
+        try {
+            MongoClient mongoClient = new MongoClient("localhost", 27017);
+            DB db = mongoClient.getDB("test");
+            System.out.println("Connect to database successfully");
+            DBCollection coll = db.getCollection("User");
+            System.out.println("Collection User selected successfully");
+            BasicDBObject doc = new BasicDBObject("UserName", UserName)
+                    .append("Password", Password)
+                    .append("FirstName", FirstName)
+                    .append("LastName", LastName)
+                    .append("Email", Email)
+                    .append("Phone", phone)
+                    .append("biography", biography);
+            coll.insert(doc);
+            System.out.println("Document inserted successfully");
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
     public static void main( String args[] ) {
 
         MongoDBJDBC myMongoDBJDBC = new MongoDBJDBC();
-        //myMongoDBJDBC.insertADocument();
-
-//        myMongoDBJDBC.updateDocument();
        myMongoDBJDBC.retriveAllDoc();
     }
 

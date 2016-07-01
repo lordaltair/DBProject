@@ -1,6 +1,8 @@
 package code.Server.DataBase;
 
 import com.mongodb.*;
+import org.bson.types.ObjectId;
+import sun.net.www.content.audio.basic;
 
 import java.net.UnknownHostException;
 
@@ -12,9 +14,7 @@ public class MongoDBJDBC
     {
 
         MongoDBJDBC myMongoDBJDBC = new MongoDBJDBC();
-        //myMongoDBJDBC.insertADocument();
 
-//        myMongoDBJDBC.updateDocument();
         myMongoDBJDBC.retriveAllDoc();
     }
 
@@ -116,5 +116,79 @@ public class MongoDBJDBC
         }
 
     }
+    void add_a_user(String FirstName, String LastName, String UserName,
+                    String Password, String Email, long phone, String biography)
+    {
+        try {
+            MongoClient mongoClient = new MongoClient("localhost", 27017);
+            DB db = mongoClient.getDB("test");
+            System.out.println("Connect to database successfully");
+            DBCollection coll = db.getCollection("User");
+            System.out.println("Collection User selected successfully");
+            BasicDBObject doc = new BasicDBObject("UserName", UserName)
+                    .append("Password", Password)
+                    .append("FirstName", FirstName)
+                    .append("LastName", LastName)
+                    .append("Email", Email)
+                    .append("Phone", phone)
+                    .append("biography", biography)
+                    .append("Friend IDs", new BasicDBList())
+                    .append("Group IDs", new BasicDBList())
+                    .append("Channel IDs", new BasicDBList());
+            coll.insert(doc);
+            System.out.println("Document inserted successfully");
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+    void add_a_friend(BasicDBObject a, BasicDBObject b)//b = a's friend
+    {
+
+        try {
+            MongoClient mongoClient = new MongoClient("localhost", 27017);
+            DB db = mongoClient.getDB("test");
+            System.out.println("Connect to database successfully");
+            DBCollection coll = db.getCollection("User");
+            DBObject find = new BasicDBObject("UserName", a.get("UserName"));
+            DBObject listItem = new BasicDBObject("Friend IDs", new BasicDBObject("UserName",b.get("UserName")));
+            DBObject updateQuery = new BasicDBObject("$push", listItem);
+            coll.update(find, updateQuery);
+
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+    void add_a_massage_to_chat (BasicDBObject a, BasicDBObject b, String message)
+    {
+        try {
+            MongoClient mongoClient = new MongoClient("localhost", 27017);
+            DB db = mongoClient.getDB("Test");
+            System.out.println("Connect to database successfully");
+            DBCollection coll = db.getCollection("Chat");
+            BasicDBObject fields = new BasicDBObject();
+            BasicDBObject whereQuery = new BasicDBObject();
+            fields.put("A",a.get("UserName"));
+            fields.put("B",b.get("UserName"));
+            DBCursor cursor = coll.find(whereQuery, fields);
+
+
+
+
+
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+    }
+
+    void initialization ()
+    {
+
+
+    }
+
+
 
 }
