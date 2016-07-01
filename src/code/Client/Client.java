@@ -208,7 +208,7 @@ public class Client {
         JSONObject args = new JSONObject();
         args.put("message", m);
 
-        obj.put("command" , UNFRIEND);
+        obj.put("command" , CLIENT_SEND_NEW_MSG);
         obj.put("arg" , args);
 
         obj.writeJSONString(out);
@@ -221,14 +221,14 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        JSONObject object = new JSONObject();
-        object.put("username", username);
-        object.put("time",deletetime);
-        JSONArray array = new JSONArray();
-        array.add(object);
+        User user = new User();
+        user.setUsername(username);
+        PrivateChat pv = new PrivateChat(user,deletetime);
+        JSONObject args = new JSONObject();
+        args.put("privatechat", pv);
 
         obj.put("command" , START_PV_CHAT);
-        obj.put("arg" , array);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -250,14 +250,18 @@ public class Client {
 //        return result;
 //    }
 
-    private String clientmention(String me,String username) throws IOException {
+    private String clientmention(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 12);
-        obj.put("arg1" , me);
-        obj.put("arg2" , username);
+        User user = new User();
+        user.setUsername(username);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
+
+        obj.put("command" , CLIENT_MENTION);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -269,7 +273,13 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 14);
+        User user = new User();
+        user.setUsername(username);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
+
+        obj.put("command" , CLIENT_MENTION);
+        obj.put("arg" , args);obj.put("command" , 14);
         obj.put("arg1" , username);
 
         obj.writeJSONString(out);

@@ -1,20 +1,28 @@
 package code.PrimitiveClasses;
 
-public class PrivateChat extends BasicChat
+public class PrivateChat
 {
-    int time;
-
-    public int getTime() {
-        return time;
+    int deletetime;
+    User user;
+    public int getDeletetime() {
+        return deletetime;
     }
 
-    public void setTime(int time) {
-        this.time = time;
+    public void setDeletetime(int deletetime) {
+        this.deletetime = deletetime;
     }
 
-    public PrivateChat(String title , int time)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public PrivateChat(User user , int deletetime)
     {
-        super(title);
-        this.time  = time;
+        this.deletetime = deletetime;
+        this.user = user;
     }
 }
