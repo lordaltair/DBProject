@@ -7,7 +7,8 @@ public class COMMAND_CODES
     public static final int START_CHAT = i++; // GROUP OR USER OR ....
     public static final int UNFRIEND = i++; // USER
     public static final int MORE_MESSAGE = i++; // TIME, GROUP OR USER OR ....
-    public static final int GET_PROFILE_DETAIL = i++; // -
+    public static final int GET_MY_PROFILE_DETAIL = i++; // -
+    public static final int GET_PROFILE_DETAIL = i++; // USER
     public static final int REPORT = i++; // USER : NAME
     public static final int CLIENT_SEND_NEW_MSG = i++; // TO USER OR GROUP, TIME, MSG
     public static final int SERVER_SEND_NEW_MSG = i++; // FROM USER OR GROUP, TIME, MSG
@@ -15,7 +16,8 @@ public class COMMAND_CODES
     public static final int GET_GROUP_LIST = i++; // GROUP
     public static final int CLIENT_MENTION = i++; // USER
     public static final int SERVER_MENTION = i++; // GROUP OR CHAT
-    public static final int SEARCH = i++; // SEARCH QUERY
+    public static final int SEARCH_USER = i++; // SEARCH USER
+    public static final int SEARCH_QUERY = i++; // SEARCH QUERY
     public static final int ADD_TO_FREIND_LIST = i++; // USER
     public static final int CREATE_GROUP = i++; // TITLE, MEMBERS[]
     public static final int LEAVE_GROUP = i++; // GROUP
