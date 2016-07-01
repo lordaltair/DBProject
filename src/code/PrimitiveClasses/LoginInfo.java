@@ -5,7 +5,7 @@ import org.json.simple.JSONObject;
 /**
  * Created by Ali on 7/1/2016.
  */
-public class LoginInfo {
+public class LoginInfo implements JsonParsable{
     private String username;
     private String password;
 
@@ -35,5 +35,10 @@ public class LoginInfo {
     public JSONObject toJsonObj()
     {
         return null;
+    }
+
+    @Override
+    public void parsJsonObj(JSONObject obj) {
+
     }
 }
