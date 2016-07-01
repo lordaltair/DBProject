@@ -4,6 +4,6 @@ public class PrivateChat extends BasicChat
 {
     public PrivateChat(String title, User[] members)
     {
-        super(title, members);
+        super(title);
     }
 }

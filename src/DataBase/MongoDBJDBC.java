@@ -36,24 +36,18 @@ public class MongoDBJDBC {
     }
     void retriveAllDoc()
     {
-        try{
-            MongoClient mongoClient = new MongoClient("localhost", 27017);
-            DB db = mongoClient.getDB("test");
+        MongoClient mongoClient = new MongoClient("localhost", 27017);
+        DB db = mongoClient.getDB("test");
 
 //            boolean auth = db
 //                    .authenticate("myUserName", "myPassword".toCharArray());
-            DBCollection coll = db.getCollection("mycol");
-            DBCursor cursor = coll.find();
-            int i = 1;
-            while (cursor.hasNext()) {
-                System.out.println("Inserted Document: " + i);
-                System.out.println(cursor.next());
-                i++;
-            }
-        }
-        catch (UnknownHostException e)
-        {
-            e.printStackTrace();
+        DBCollection coll = db.getCollection("mycol");
+        DBCursor cursor = coll.find();
+        int i = 1;
+        while (cursor.hasNext()) {
+            System.out.println("Inserted Document: " + i);
+            System.out.println(cursor.next());
+            i++;
         }
 
     }
