@@ -1,5 +1,6 @@
 package code.Server.DataBase;
 
+import code.PrimitiveClasses.FriendList;
 import com.mongodb.*;
 
 import java.net.UnknownHostException;
@@ -8,6 +9,12 @@ public class MongoDBJDBC
 {
     DB db;
     MongoClient mongoClient = null;
+
+    public MongoDBJDBC()
+    {
+        initialization();
+    }
+
     public static void main(String args[])
     {
 
@@ -15,10 +22,7 @@ public class MongoDBJDBC
 
         myMongoDBJDBC.retriveAllDoc();
     }
-    public MongoDBJDBC()
-    {
-        initialization();
-    }
+
     public void connectToDataBase()
     {
         try
@@ -180,7 +184,8 @@ public class MongoDBJDBC
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
-    public void get_friend_list(String UserName)
+
+    public FriendList get_friend_list(String UserName)
     {
         try
         {
@@ -196,6 +201,7 @@ public class MongoDBJDBC
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
+        return null;
     }
     public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
     {

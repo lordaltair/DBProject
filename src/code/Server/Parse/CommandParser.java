@@ -7,6 +7,7 @@ import code.PrimitiveClasses.Profile;
 import code.PrimitiveClasses.User;
 import code.Server.DataBase.MongoDBJDBC;
 import code.Server.Network.ClientTCPConnection;
+import com.google.gson.Gson;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -82,9 +83,9 @@ public class CommandParser
 
     public void GET_FRIEND_LIST(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-        FriendList friendList = new FriendList();
-        //todo get friend list from mongodb
-        clientTCPConnection.send(friendList.toJsonObj());
+        FriendList friendList = null;
+        friendList = dbManager.get_friend_list(clientTCPConnection.getUser().getUsername());
+        clientTCPConnection.sendObject(friendList);
     }
 
     public void START_CHAT(JSONObject args, ClientTCPConnection clientTCPConnection)
@@ -167,7 +168,8 @@ public class CommandParser
 //        dbManager.add_a_friend(clientTCPConnection.getUser().getUsername(), friend.getUsername());
         FriendList friendList = null;
         // TODO: 7/1/16 get friend list
-        clientTCPConnection.send(friendList.toJsonObj());
+        Gson gson = new Gson();
+        clientTCPConnection.sendObject(friendList);
     }
 
     public void CREATE_GROUP(JSONObject args, ClientTCPConnection clientTCPConnection)
@@ -204,7 +206,7 @@ public class CommandParser
                 profile.getEmail(), profile.getPhoneNumber(), profile.getBioDescription());
         JSONObject response = new JSONObject();
         response.put("ack", true);
-        clientTCPConnection.send(response);
+        clientTCPConnection.sendJsonObj(response);
     }
 
     public void LOGIN(JSONObject args, ClientTCPConnection clientTCPConnection)
@@ -221,7 +223,7 @@ public class CommandParser
             accepted = true;
         }
         response.put("ack", accepted);
-        clientTCPConnection.send(response);
+        clientTCPConnection.sendJsonObj(response);
 
     }
 

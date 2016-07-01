@@ -1,6 +1,5 @@
 package gui;
 
-import code.Client.Client;
 import code.PrimitiveClasses.LoginInfo;
 import code.PrimitiveClasses.Profile;
 import code.PrimitiveClasses.User;
@@ -67,22 +66,7 @@ public class LoginPage
                         modifiedsentence.trim();
                         if (modifiedsentence.equals("true"))
                         {
-                            mainframe.gotoNextFrame();
-
-                            new Thread(new Runnable()
-                            {
-                                @Override
-                                public void run()
-                                {
-                                    try
-                                    {
-                                        new Client(finalClientSocket, Username, outToServer, inFromServer);
-                                    } catch (IOException e1)
-                                    {
-                                        e1.printStackTrace();
-                                    }
-                                }
-                            });
+                            mainframe.gotoNextFrame(Username, finalClientSocket, outToServer, inFromServer);
                         } else
                         {
                             String infoMessage = "Wrong Username Or Password! Try Again";

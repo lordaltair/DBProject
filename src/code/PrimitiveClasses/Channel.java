@@ -2,11 +2,28 @@ package code.PrimitiveClasses;
 
 import org.json.simple.JSONObject;
 
-public class Chat extends BasicChat
+public class Channel extends BasicChat
 {
-    public Chat(String title)
+    private User admin;
+
+    public Channel(String title)
     {
         super(title);
+    }
+
+    public Channel()
+    {
+        super();
+    }
+
+    public User getAdmin()
+    {
+        return admin;
+    }
+
+    public void setAdmin(User admin)
+    {
+        this.admin = admin;
     }
 
     @Override
