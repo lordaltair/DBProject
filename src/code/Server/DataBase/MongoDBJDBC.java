@@ -1,8 +1,6 @@
 package code.Server.DataBase;
 
 import com.mongodb.*;
-import org.bson.types.ObjectId;
-import sun.net.www.content.audio.basic;
 
 import java.net.UnknownHostException;
 
@@ -18,7 +16,7 @@ public class MongoDBJDBC
         myMongoDBJDBC.retriveAllDoc();
     }
 
-    void connectToDataBase()
+    public void connectToDataBase()
     {
         try
         {
@@ -33,9 +31,16 @@ public class MongoDBJDBC
         }
     }
 
-    void retriveAllDoc()
+    public void retriveAllDoc()
     {
-        MongoClient mongoClient = new MongoClient("localhost", 27017);
+        MongoClient mongoClient = null;
+        try
+        {
+            mongoClient = new MongoClient("localhost", 27017);
+        } catch (UnknownHostException e)
+        {
+            e.printStackTrace();
+        }
         DB db = mongoClient.getDB("test");
 
 //            boolean auth = db
@@ -52,7 +57,7 @@ public class MongoDBJDBC
 
     }
 
-    void insertADocument()
+    public void insertADocument()
     {
         try
         {
@@ -76,7 +81,7 @@ public class MongoDBJDBC
         }
     }
 
-    void updateDocument()
+    public void updateDocument()
     {
         try
         {
@@ -110,8 +115,9 @@ public class MongoDBJDBC
         }
 
     }
-    void add_a_user(String FirstName, String LastName, String UserName,
-                    String Password, String Email, long phone, String biography)
+
+    public void add_a_user(String FirstName, String LastName, String UserName,
+                           String Password, String Email, String phone, String biography)
     {
         try {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
@@ -135,7 +141,8 @@ public class MongoDBJDBC
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
-    void add_a_friend(BasicDBObject a, BasicDBObject b)//b = a's friend
+
+    public void add_a_friend(BasicDBObject a, BasicDBObject b)//b = a's friend
     {
 
         try {
@@ -153,7 +160,8 @@ public class MongoDBJDBC
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
-    void add_a_massage_to_chat (BasicDBObject a, BasicDBObject b, String message)
+
+    public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
     {
         try {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
@@ -177,12 +185,34 @@ public class MongoDBJDBC
 
     }
 
-    void initialization ()
+    public void initialization()
     {
 
 
     }
 
 
-
+    public String find_username_pass(String username)
+    {
+        MongoClient mongoClient = null;
+        try
+        {
+            mongoClient = new MongoClient("localhost", 27017);
+            DB db = mongoClient.getDB("test");
+            System.out.println("Connect to database successfully");
+            DBCollection coll = db.getCollection("User");
+            System.out.println("Collection User selected successfully");
+            BasicDBObject whereQuery = new BasicDBObject();
+            whereQuery.put("UserName", username);
+            DBCursor dbObjects = coll.find(whereQuery);
+            if (dbObjects.size() == 0)
+                return null;
+            DBObject next = dbObjects.next();
+            return (String) next.get("Password");
+        } catch (UnknownHostException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

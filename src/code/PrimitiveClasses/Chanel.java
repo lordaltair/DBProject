@@ -4,9 +4,9 @@ public class Chanel extends BasicChat
 {
     private User admin;
 
-    public Chanel(String title, User[] members)
+    public Chanel(String title)
     {
-        super(title, members);
+        super(title);
     }
 
     public User getAdmin()

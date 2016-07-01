@@ -2,12 +2,13 @@ package code.PrimitiveClasses;
 
 import org.json.simple.JSONObject;
 
-/**
- * Created by Ali on 7/1/2016.
- */
 public class LoginInfo implements JsonParsable{
     private String username;
     private String password;
+
+    public LoginInfo()
+    {
+    }
 
     public LoginInfo(String username, String password)
     {
@@ -19,6 +20,12 @@ public class LoginInfo implements JsonParsable{
         return username;
     }
 
+    public void setUsername(String username)
+    {
+
+        this.username = username;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -27,18 +34,15 @@ public class LoginInfo implements JsonParsable{
         this.password = password;
     }
 
-    public void setUsername(String username) {
-
-        this.username = username;
-    }
-
+    @Override
     public JSONObject toJsonObj()
     {
         return null;
     }
 
     @Override
-    public void parsJsonObj(JSONObject obj) {
+    public void parsJsonObj(JSONObject obj)
+    {
 
     }
 }

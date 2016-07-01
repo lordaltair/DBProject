@@ -11,6 +11,10 @@ public class Profile implements JsonParsable
     private String phoneNumber;
     private String bioDescription;
 
+    public Profile()
+    {
+    }
+
     public Profile(User user, String lastName, String password, String email, String phoneNumber, String bioDescription)
     {
         this.user = user;

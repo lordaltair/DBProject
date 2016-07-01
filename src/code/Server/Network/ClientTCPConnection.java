@@ -41,4 +41,15 @@ public class ClientTCPConnection implements Runnable
     public void send(JSONObject obj)
     {
     }
+
+    public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser(User user)
+    {
+        this.user = user;
+        // TODO: 7/1/16 add it to logins
+    }
 }
