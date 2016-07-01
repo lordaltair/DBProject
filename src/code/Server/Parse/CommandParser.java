@@ -35,7 +35,8 @@ public class CommandParser
             methods[COMMAND_CODES.CLIENT_MENTION] = CommandParser.class.getMethod("CLIENT_MENTION", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.SERVER_MENTION] = CommandParser.class.getMethod("SERVER_MENTION", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.CLIENT_UNMENTION] = CommandParser.class.getMethod("CLIENT_UNMENTION", JSONObject.class, ClientTCPConnection.class);
-            methods[COMMAND_CODES.SEARCH] = CommandParser.class.getMethod("SEARCH", JSONObject.class, ClientTCPConnection.class);
+            methods[COMMAND_CODES.SEARCH_QUERY] = CommandParser.class.getMethod("SEARCH", JSONObject.class, ClientTCPConnection.class);
+            methods[COMMAND_CODES.SEARCH_USER] = CommandParser.class.getMethod("SEARCH", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.ADD_TO_FREIND_LIST] = CommandParser.class.getMethod("ADD_TO_FREIND_LIST", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.CREATE_GROUP] = CommandParser.class.getMethod("CREATE_GROUP", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.LEAVE_GROUP] = CommandParser.class.getMethod("LEAVE_GROUP", JSONObject.class, ClientTCPConnection.class);
@@ -147,7 +148,12 @@ public class CommandParser
 
     }
 
-    public void SEARCH(JSONObject args, ClientTCPConnection clientTCPConnection)
+    public void SEARCH_USER(JSONObject args, ClientTCPConnection clientTCPConnection)
+    {
+
+    }
+
+    public void SEARCH_QUERY(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
 
     }

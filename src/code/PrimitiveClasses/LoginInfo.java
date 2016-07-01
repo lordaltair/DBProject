@@ -22,7 +22,6 @@ public class LoginInfo implements JsonParsable{
 
     public void setUsername(String username)
     {
-
         this.username = username;
     }
 

@@ -1,45 +1,53 @@
 package code.Server.Network;
 
 import code.PrimitiveClasses.User;
+import code.Server.Parse.CommandParser;
 import org.json.simple.JSONObject;
 
 import java.io.*;
 
 public class ClientTCPConnection implements Runnable
 {
-    String clientSentence;
-    String capitalizedSentence;
+    private final DataInputStream inFromClient;
+    private final DataOutputStream outToClient;
     User user;
+    private CommandParser commandParser;
 
 
     public ClientTCPConnection(InputStream inputStream, OutputStream outputStream)
     {
-        BufferedReader inFromClient =
-                new BufferedReader(new InputStreamReader(inputStream));
-        DataOutputStream outToClient = new DataOutputStream(outputStream);
+        inFromClient = new DataInputStream(inputStream);
+        outToClient = new DataOutputStream(outputStream);
+        commandParser = new CommandParser();
+    }
+
+    @Override
+    public void run()
+    {
         while (true)
         {
             try
             {
-                clientSentence = inFromClient.readLine();
-                System.out.println("Received: " + clientSentence);
-                capitalizedSentence = clientSentence.toUpperCase() + '\n';
-                outToClient.writeBytes(capitalizedSentence);
-            } catch (Exception e)
+                String msg = inFromClient.readUTF();
+                commandParser.parse(msg, this);
+            } catch (IOException e)
             {
                 e.printStackTrace();
             }
         }
     }
 
-    @Override
-    public void run()
+    synchronized public void send(JSONObject obj)
     {
+        try
+        {
+            obj.writeJSONString(new StringWriter());
+            outToClient.writeUTF(obj.toString());
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
 
-    }
-
-    public void send(JSONObject obj)
-    {
     }
 
     public User getUser()
