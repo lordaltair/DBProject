@@ -9,10 +9,14 @@ import code.PrimitiveClasses.User;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.Time;
 
 public class First
 {
@@ -23,7 +27,7 @@ public class First
     private JButton unFriendButton;
     private JButton loadProfileButton;
     private JButton reportButton;
-    private JTextArea textArea1;
+    public JTextArea textArea1;
     private JButton profileButton;
     private JButton moreMessageButton;
     private JButton submitButton;
@@ -32,7 +36,24 @@ public class First
 
     public First()
     {
+        chatTree.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent me) {
+                doMouseClicked(me);
+            }
+        });
+    }
 
+    private void doMouseClicked(MouseEvent me) {
+        TreePath tp = chatTree.getPathForLocation(me.getX(), me.getY());
+        if (tp != null) {
+            try {
+                client.startchat(tp.toString());
+                String str = client.inFromServer.readUTF();
+                client.lasttime = client.getmessage(str);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void createUIComponents()

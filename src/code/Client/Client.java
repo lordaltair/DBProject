@@ -20,12 +20,17 @@ public class Client {
 
     FriendList friendlist;
     String clientname;
-    Time lassttime;
+    public Time lasttime;
     First ui;
+    public DataOutputStream outToServer;
+    public DataInputStream inFromServer;
+
 
     public Client(Socket clientSocket, String username, DataOutputStream outToServer, DataInputStream inFromServer, First ui) throws IOException
     {
         //initial variables
+        this.outToServer = outToServer;
+        this.inFromServer = inFromServer;
         this.ui = ui;
         String modifiedSentence;
         this.clientname = username;
@@ -51,11 +56,6 @@ public class Client {
         ui.updateFriendList(friendlist);
 
 
-        //insert kardan friendlist be UI
-        // va sepas kole ui ra inja neshan bedahim
-
-        //inja ui hazer oomade
-
     }
 
     private int getdeletetime(String str){
@@ -72,14 +72,18 @@ public class Client {
         deletetime = Integer.parseInt(timestr);
         return deletetime;
     }
-    private Time getmessage(String str) throws IOException {
+    public Time getmessage(String str) throws IOException {
         Message[] messages;
         Time lasttime = null;
         Conversation conversation = new Gson().fromJson(str, Conversation.class);
         messages = conversation.getMessages();
         lasttime = messages[messages.length].getTimeSent();
+        ui.textArea1.setEditable(false);
+        for(int i=0;i<messages.length;i++){
+            String strtmp = messages[i].getSender() + " : " + messages[i].getMsg() + "      time : " + messages[i].getTimeSent() + "\n";
+            ui.textArea1.append(strtmp);
+        }
 
-        // ferestadane messages be UI va neshan dadan payam ha
         return lasttime;
     }
 
@@ -113,7 +117,7 @@ public class Client {
         // safe kari badesh biad ke bere toye chat
     }
 
-    private String startchat(String username) throws IOException {
+    public String startchat(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
