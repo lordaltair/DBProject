@@ -107,6 +107,26 @@ public class LoginPage {
                             String TitleMessaage = "Sorry!";
                             JOptionPane.showMessageDialog(null, infoMessage, TitleMessaage, JOptionPane.ERROR_MESSAGE);
                         }
+                        user= new User();
+                        user.setUsername("dani");
+                        user.setName("danial");
+
+                        profile = new Profile(user,"alihoseini" , "1234" , "d.daniel@gmail.com" , "33333333" , "salam man noobam");
+
+                        str = signup(profile);
+                        outToServer.writeUTF(str);
+                        str = inFromServer.readUTF();
+                        str = jsontonormallogin(str);
+                        if (str.equals("true")) {
+                            String infoMessage = "You signed Correctly!";
+                            String TitleMessaage = "Welcome!";
+                            JOptionPane.showMessageDialog(null, infoMessage, TitleMessaage, JOptionPane.OK_OPTION);
+                        }
+                        else{
+                            String infoMessage = "You signed Incorrectly! Please Try Again";
+                            String TitleMessaage = "Sorry!";
+                            JOptionPane.showMessageDialog(null, infoMessage, TitleMessaage, JOptionPane.ERROR_MESSAGE);
+                        }
 
                     } catch (IOException e1) {
                         e1.printStackTrace();
