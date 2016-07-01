@@ -1,11 +1,16 @@
 package code.Server.Network;
 
+import code.PrimitiveClasses.User;
+import org.json.simple.JSONObject;
+
 import java.io.*;
 
 public class ClientTCPConnection implements Runnable
 {
     String clientSentence;
     String capitalizedSentence;
+    User user;
+
 
     public ClientTCPConnection(InputStream inputStream, OutputStream outputStream)
     {
@@ -31,5 +36,9 @@ public class ClientTCPConnection implements Runnable
     public void run()
     {
 
+    }
+
+    public void send(JSONObject obj)
+    {
     }
 }

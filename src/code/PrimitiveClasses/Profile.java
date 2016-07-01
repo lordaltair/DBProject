@@ -1,6 +1,8 @@
 package code.PrimitiveClasses;
 
-public class Profile
+import org.json.simple.JSONObject;
+
+public class Profile implements JsonParsable
 {
     private User user;
     private String lastName;
@@ -77,5 +79,22 @@ public class Profile
     public void setBioDescription(String bioDescription)
     {
         this.bioDescription = bioDescription;
+    }
+
+    @Override
+    public JSONObject toJsonObj()
+    {
+        JSONObject result = new JSONObject();
+        result.put("user", user.toJsonObj());
+        result.put("lastname", lastName);
+        result.put("data", result);
+        //todo
+        return null;
+    }
+
+    @Override
+    public void parsJsonObj(JSONObject obj)
+    {
+
     }
 }

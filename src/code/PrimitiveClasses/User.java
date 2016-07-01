@@ -1,6 +1,8 @@
 package code.PrimitiveClasses;
 
-public class User
+import org.json.simple.JSONObject;
+
+public class User implements JsonParsable
 {
     private String name;
     private String username;
@@ -29,5 +31,17 @@ public class User
     public void setUsername(String username)
     {
         this.username = username;
+    }
+
+    @Override
+    public JSONObject toJsonObj()
+    {
+        return null;
+    }
+
+    @Override
+    public void parsJsonObj(JSONObject obj)
+    {
+
     }
 }

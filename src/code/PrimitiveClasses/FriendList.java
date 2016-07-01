@@ -1,6 +1,8 @@
 package code.PrimitiveClasses;
 
-public class FriendList
+import org.json.simple.JSONObject;
+
+public class FriendList implements JsonParsable
 {
     private User user;
     private User[] friends;
@@ -57,6 +59,18 @@ public class FriendList
     public void setChanels(Chanel[] chanels)
     {
         this.chanels = chanels;
+    }
+
+    @Override
+    public JSONObject toJsonObj()
+    {
+        return null;
+    }
+
+    @Override
+    public void parsJsonObj(JSONObject obj)
+    {
+
     }
 }
 
