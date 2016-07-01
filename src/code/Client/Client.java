@@ -17,111 +17,44 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static code.COMMAND_CODES.*;
+
 public class Client {
     FriendList friendlist;
     String clientname;
+    Time lassttime;
     public Client(Socket clientSocket , String username) throws IOException {
         //initial variables
-        String modifiedSentence = null;
+        String modifiedSentence;
         this.clientname = username;
         DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
         DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
 
-        JSONObject obj = new JSONObject();
-        obj.put("command" , 1);
-        obj.put("arg1" , null);
-        obj.put("arg2" , null);
-
-        StringWriter out = new StringWriter();
-        obj.writeJSONString(out);
-        modifiedSentence = out.toString();
-
+        modifiedSentence=getfriendlist();
         outToServer.writeUTF(modifiedSentence);
         outToServer.flush();
 
         inFromServer.readUTF();
 
         friendlist = new FriendList();
-        friendlist = normaltojsonfriendlist(modifiedSentence , username);
+        friendlist.parsJsonObj();
 
         //insert kardan friendlist be UI
         // va sepas kole ui ra inja neshan bedahim
 
     }
 
-    private FriendList normaltojsonfriendlist(String str ,String username) {
-        String result = null;
-        FriendList friendlist = new FriendList();
-        JSONParser parser=new JSONParser();
-        try {
-            Object obj = parser.parse(str);
-            JSONArray array = (JSONArray)obj;
-
-            JSONObject objme = (JSONObject)array.get(0);
-            User me = new User(objme.get("user").toString() , username);
-
-            Object objfriends = array.get(1);
-            JSONArray arrayfriends = (JSONArray)objfriends;
-            User[] friends = new User[arrayfriends.size()];
-            for(int i=0;i < arrayfriends.size();i++) {
-                JSONObject objuser = (JSONObject)arrayfriends.get(i);
-                friends[i].setUsername(objuser.get("username").toString());
-                friends[i].setName(objuser.get("name").toString());
-            }
-            friendlist.setFriends(friends);
-
-            Object objunknown = array.get(2);
-            JSONArray arrayunknown = (JSONArray)objunknown;
-            User[] unknown = new User[arrayunknown.size()];
-            for(int i=0;i < arrayunknown.size();i++) {
-                JSONObject objuser = (JSONObject)arrayunknown.get(i);
-                unknown[i].setUsername(objuser.get("username").toString());
-                unknown[i].setName(objuser.get("name").toString());
-            }
-            friendlist.setUnknownFriends(unknown);
-
-            Object objgroup = array.get(3);
-            JSONArray arraygroup = (JSONArray)objgroup;
-            Group[] groups = new Group[arraygroup.size()];
-            for(int i=0;i < arraygroup.size();i++) {
-                JSONObject objuser = (JSONObject)arraygroup.get(i);
-                groups[i].setTitle(objuser.get("title").toString());
-
-                Object memberss = objuser.get("members");
-                JSONArray arraymembers = (JSONArray)memberss;
-                User[] members = new User[arraymembers.size()];
-                for(int j=0;j < arraymembers.size();j++) {
-                    JSONObject objuserss = (JSONObject)arrayunknown.get(j);
-                    members[i].setUsername(objuserss.get("username").toString());
-                    members[i].setName(objuserss.get("name").toString());
-                }
-                groups[i].setMembers(members);
-            }
-            friendlist.setGroups(groups);
-
-            Object objchannel = array.get(4);
-            JSONArray arraychannel = (JSONArray)objchannel;
-            Chanel[] channels = new Chanel[arraychannel.size()];
-            for(int i=0;i < arraychannel.size();i++) {
-                JSONObject objuser = (JSONObject)arraychannel.get(i);
-                channels[i].setTitle(objuser.get("title").toString());
-            }
-            friendlist.setChanels(channels);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return friendlist;
+    private FriendList jsontonormalfriendlist(String str ,String username) {
+//
     }
 
-    private String startchat(String me, String username) throws IOException {
-        String result = null;
+    private String getfriendlist() throws IOException {
+        String result;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 2);
-        obj.put("arg1" , me);
-        obj.put("arg2" , username);
+        obj.put("command" , GET_FRIEND_LIST);
+        obj.put("arg" , null);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -130,10 +63,31 @@ public class Client {
         // safe kari badesh biad ke bere toye chat
     }
 
-    private void getmessage(String str) throws IOException {
+    private String startchat(String username) throws IOException {
         String result = null;
+        JSONObject obj = new JSONObject();
+        StringWriter out = new StringWriter();
+
+        JSONObject object = new JSONObject();
+        object.put("username", username);
+        JSONArray array = new JSONArray();
+        array.add(object);
+
+        obj.put("command" , START_CHAT);
+        obj.put("arg" , array);
+
+        obj.writeJSONString(out);
+        result = out.toString();
+        return result;
+
+        // safe kari badesh biad ke bere toye chat
+    }
+
+    private Time getmessage(String str) throws IOException {
+        String result;
         Message[] messages;
         JSONParser parser=new JSONParser();
+        Time lasttime = null;
         try {
             Object obj = parser.parse(str);
             JSONArray array = (JSONArray) obj;
@@ -149,20 +103,26 @@ public class Client {
                 message.setTimeSent(time);
                 messages[i] = message;
             }
+            lasttime = messages[messages.length].getTimeSent();
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         // ferestadane messages be UI va neshan dadan payam ha
+        return lasttime;
     }
-    private String unfriend(String me, String username) throws IOException {
-        String result = null;
+    private String unfriend(String username) throws IOException {
+        String result;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 3);
-        obj.put("arg1" , me);
-        obj.put("arg2" , username);
+        JSONObject object = new JSONObject();
+        object.put("username", username);
+        JSONArray array = new JSONArray();
+        array.add(object);
+
+        obj.put("command" , UNFRIEND);
+        obj.put("arg" , array);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -173,96 +133,101 @@ public class Client {
         String result = null;
 
         friendlist = new FriendList();
-        friendlist = normaltojsonfriendlist(str , me);
+        friendlist = jsontonormalfriendlist(str , me);
 
         //insert kardan friendlist be UI
         // va sepas kole ui ra inja neshan bedahim
 
     }
 
-    private String moremessage(String me, String username) throws IOException {
+    private String moremessage(String username , Time time) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        Time time = Time.valueOf(sdf.format(cal.getTime()));
 
-        obj.put("command" , 4);
-        obj.put("arg1" , me);
-        obj.put("arg2" , username);
-        obj.put("arg3" , time);
+        JSONObject object = new JSONObject();
+        object.put("username", username);
+        object.put("time" , time);
+        JSONArray array = new JSONArray();
+        array.add(object);
+
+        obj.put("command" , MORE_MESSAGE);
+        obj.put("arg" , array);
 
         obj.writeJSONString(out);
         result = out.toString();
         return result;
     }
 
-    private String getmyprofiledetail(String me) throws IOException {
+    private String getmyprofiledetail(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 5);
-        obj.put("arg1" , me);
+        JSONObject object = new JSONObject();
+        object.put("username", username);
+        JSONArray array = new JSONArray();
+        array.add(object);
+
+        obj.put("command" , GET_PROFILE_DETAIL);
+        obj.put("arg" , array);
 
         obj.writeJSONString(out);
         result = out.toString();
         return result;
     }
 
-    private String getprofiledetail(String username) throws IOException {
+    private String report(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 6);
-        obj.put("arg1" , username);
+        JSONObject object = new JSONObject();
+        object.put("username", username);
+        JSONArray array = new JSONArray();
+        array.add(object);
+
+        obj.put("command" , REPORT);
+        obj.put("arg" , array);
 
         obj.writeJSONString(out);
         result = out.toString();
         return result;
     }
 
-    private String report(String me,String username) throws IOException {
+    private String clientsendnewmsg(String username , String str, Time time) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 7);
-        obj.put("arg1" , me);
-        obj.put("arg2" , username);
+        JSONObject object = new JSONObject();
+        object.put("username", username);
+        object.put("msg",str);
+        object.put("time",time);
+        JSONArray array = new JSONArray();
+        array.add(object);
+
+        obj.put("command" , CLIENT_SEND_NEW_MSG);
+        obj.put("arg" , array);
 
         obj.writeJSONString(out);
         result = out.toString();
         return result;
     }
 
-    private String clientsendnewmsg(String me,String username , String str, Time time) throws IOException {
+    private String startprivatechat(String username , int deletetime) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 8);
-        obj.put("arg1" , me);
-        obj.put("arg2" , username);
-        obj.put("arg3" , str);
-        obj.put("arg4" , time);
+        JSONObject object = new JSONObject();
+        object.put("username", username);
+        object.put("time",deletetime);
+        JSONArray array = new JSONArray();
+        array.add(object);
 
-        obj.writeJSONString(out);
-        result = out.toString();
-        return result;
-    }
-
-    private String startprivatechat(String me,String username , int deletetime) throws IOException {
-        String result = null;
-        JSONObject obj = new JSONObject();
-        StringWriter out = new StringWriter();
-
-        obj.put("command" , 10);
-        obj.put("arg1" , me);
-        obj.put("arg2" , username);
-        obj.put("arg3" , deletetime);
+        obj.put("command" , START_PV_CHAT);
+        obj.put("arg" , array);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -356,9 +321,14 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
+        JSONObject object = new JSONObject();
+        object.put("me", me);
+        object.put("title", title);
+        JSONArray array = new JSONArray();
+        array.add(object);
+
         obj.put("command" , 18);
-        obj.put("arg1" , me);
-        obj.put("arg2" , title);
+        obj.put("arg" , array);
 
         obj.writeJSONString(out);
         result = out.toString();

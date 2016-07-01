@@ -7,8 +7,8 @@ public class COMMAND_CODES
     public static final int START_CHAT; // GROUP OR USER OR ....
     public static final int UNFRIEND; // USER
     public static final int MORE_MESSAGE; // TIME, GROUP OR USER OR ....
-    public static final int GET_PROFILE_DETAIL; // -
-    public static final int REPORT; // USER : NAME
+    public static final int GET_PROFILE_DETAIL; // USER
+    public static final int REPORT; // USER
     public static final int CLIENT_SEND_NEW_MSG; // TO USER OR GROUP, TIME, MSG
     public static final int SERVER_BROADCAST_NEW_MSG; // FROM USER OR GROUP, TIME, MSG
     public static final int START_PV_CHAT; // USER, TIME

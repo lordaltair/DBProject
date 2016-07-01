@@ -1,6 +1,7 @@
 package gui;
 
 import code.Client.Client;
+import code.PrimitiveClasses.LoginInfo;
 import code.PrimitiveClasses.Profile;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,6 +16,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.Socket;
+
+import static code.COMMAND_CODES.LOGIN;
+import static code.COMMAND_CODES.SIGN_UP;
 
 /**
 * Created by Ali on 6/30/2016.
@@ -46,7 +50,8 @@ public class LoginPage {
                     Password = passwordTextField.getText();
 
                     try {
-                        String modifiedsentence = login(Username,Password);
+                        LoginInfo loginInfo = new LoginInfo(Username,Password);
+                        String modifiedsentence = login(loginInfo);
 
                         outToServer.writeUTF(modifiedsentence);
                         outToServer.flush();
@@ -82,28 +87,33 @@ public class LoginPage {
 
     }
 
-    private String signup(String me,Profile profile) throws IOException {
-        String result = null;
+    private String signup(Profile profile) throws IOException {
+        String result;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 22);
-        obj.put("arg1" , me);
-        obj.put("arg2" , profile);
+        JSONObject args = new JSONObject();
+
+        args.put("profile", profile.toJsonObj());
+
+        obj.put("command" , SIGN_UP);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
         return result;
     }
 
-    private String login(String username,String password) throws IOException {
+    private String login(LoginInfo logininfo) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 23);
-        obj.put("arg1" , username);
-        obj.put("arg2" , password);
+        JSONObject args = new JSONObject();
+        args.put("logininfo", logininfo.toJsonObj());
+
+        obj.put("command" , LOGIN);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();

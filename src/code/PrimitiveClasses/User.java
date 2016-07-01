@@ -13,6 +13,10 @@ public class User implements JsonParsable
         this.username = username;
     }
 
+    public User() {
+
+    }
+
     public String getName()
     {
         return name;
