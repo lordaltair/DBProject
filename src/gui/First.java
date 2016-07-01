@@ -1,11 +1,15 @@
 package gui;
 
+import code.PrimitiveClasses.FriendList;
+
 import javax.swing.*;
 
 /**
  * Created by Ali on 6/30/2016.
  */
-public class First {
+public class First
+{
+    public JPanel firstpanel;
     private JButton searchButton;
     private JButton privateChatButton;
     private JTree tree1;
@@ -17,12 +21,20 @@ public class First {
     private JButton moreMessageButton;
     private JButton submitButton;
     private JTextField textField1;
-    public JPanel firstpanel;
 
-    private void createUIComponents() {
+    public First()
+    {
+
+    }
+
+    private void createUIComponents()
+    {
         // TODO: place custom component creation code here
     }
-    public First(){
+
+    public void updateFriendList(FriendList friendList)
+    {
 
     }
+
 }

@@ -91,7 +91,7 @@ public class CommandParser
     {
         User user = new User();
         user.parsJsonObj((JSONObject) args.get("user"));
-
+        // TODO: 7/1/16 to be done
     }
 
     public void UNFRIEND(JSONObject args, ClientTCPConnection clientTCPConnection)
@@ -159,7 +159,7 @@ public class CommandParser
 
     }
 
-    public void ADD_TO_FREIND_LIST(JSONObject args, ClientTCPConnection clientTCPConnection)
+    public void ADD_TO_FRIEND_LIST(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
         User friend = new User();
         friend.parsJsonObj((JSONObject) args.get("user"));
