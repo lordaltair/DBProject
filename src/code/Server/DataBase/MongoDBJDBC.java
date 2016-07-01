@@ -7,7 +7,7 @@ import java.net.UnknownHostException;
 public class MongoDBJDBC
 {
     DB db;
-
+    MongoClient mongoClient = null;
     public static void main(String args[])
     {
 
@@ -15,7 +15,10 @@ public class MongoDBJDBC
 
         myMongoDBJDBC.retriveAllDoc();
     }
-
+    public MongoDBJDBC()
+    {
+        initialization();
+    }
     public void connectToDataBase()
     {
         try
@@ -141,7 +144,24 @@ public class MongoDBJDBC
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
+    public void add_a_friend(String  aUserName, String bUserName)//b = a's friend
+    {
 
+        try {
+            MongoClient mongoClient = new MongoClient("localhost", 27017);
+            DB db = mongoClient.getDB("test");
+            System.out.println("Connect to database successfully");
+            DBCollection coll = db.getCollection("User");
+            DBObject find = new BasicDBObject("UserName", aUserName);
+            DBObject listItem = new BasicDBObject("Friend IDs", new BasicDBObject("UserName",bUserName));
+            DBObject updateQuery = new BasicDBObject("$push", listItem);
+            coll.update(find, updateQuery);
+
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
     public void add_a_friend(BasicDBObject a, BasicDBObject b)//b = a's friend
     {
 
@@ -160,7 +180,23 @@ public class MongoDBJDBC
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
+    public void get_friend_list(String UserName)
+    {
+        try
+        {
+            DBCollection coll = db.getCollection("User");
 
+            BasicDBObject whereQuery = new BasicDBObject();
+            whereQuery.put("UserName", UserName);
+            BasicDBObject fields = new BasicDBObject("_id", "1");
+            DBCursor cursor = coll.find(whereQuery, fields);
+            //TODO: what next?
+
+
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
     public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
     {
         try {
@@ -168,13 +204,33 @@ public class MongoDBJDBC
             DB db = mongoClient.getDB("Test");
             System.out.println("Connect to database successfully");
             DBCollection coll = db.getCollection("Chat");
-            BasicDBObject fields = new BasicDBObject();
+//            BasicDBObject fields = new BasicDBObject();
             BasicDBObject whereQuery = new BasicDBObject();
-            fields.put("A",a.get("UserName"));
-            fields.put("B",b.get("UserName"));
-            DBCursor cursor = coll.find(whereQuery, fields);
-
-
+            whereQuery.put("A",a.get("UserName"));
+            whereQuery.put("B",b.get("UserName"));
+            DBCursor cursor = coll.find(whereQuery);
+            if (cursor.hasNext())//I think it means we found a true document
+            {
+                DBObject tmp = cursor.next();
+                DBObject listItem = new BasicDBObject("Messages", new BasicDBObject("Message",message)
+                        .append("$currentDate", new BasicDBObject("Time", true)));
+                DBObject updateQuery = new BasicDBObject("$push", listItem);
+                coll.update(tmp, updateQuery);
+                return;
+            }
+            whereQuery = new BasicDBObject();
+            whereQuery.put("A",b.get("UserName"));
+            whereQuery.put("B",a.get("UserName"));
+            cursor= coll.find(whereQuery);
+            if (cursor.hasNext())
+            {
+                DBObject tmp = cursor.next();
+                DBObject listItem = new BasicDBObject("Messages", new BasicDBObject("Message",message)
+                        .append("$currentDate", new BasicDBObject("Time", true)));
+                DBObject updateQuery = new BasicDBObject("$push", listItem);
+                coll.update(tmp, updateQuery);
+                return;
+            }
 
 
 
@@ -187,7 +243,14 @@ public class MongoDBJDBC
 
     public void initialization()
     {
-
+        try {
+            mongoClient = new MongoClient("localhost", 27017);
+            db = mongoClient.getDB("Test");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
     }
 
