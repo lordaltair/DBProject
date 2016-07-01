@@ -17,8 +17,8 @@ import java.io.StringWriter;
 import java.net.Socket;
 
 /**
- * Created by Ali on 6/30/2016.
- */
+* Created by Ali on 6/30/2016.
+*/
 public class LoginPage {
     public JPanel LoginPanel;
 
@@ -31,9 +31,9 @@ public class LoginPage {
 
     public LoginPage() throws IOException {
 
-        Socket clientSocket = new Socket("localhost", 6789);
-        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-        DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
+        final Socket clientSocket = new Socket("localhost", 6789);
+        final DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+        final DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
 
         while(true) {
             loginButton.addActionListener(new ActionListener() {
