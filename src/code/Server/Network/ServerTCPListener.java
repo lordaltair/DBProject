@@ -36,6 +36,7 @@ public class ServerTCPListener implements Runnable
             } catch (IOException e)
             {
                 e.printStackTrace();
+                return;
             }
         }
     }
