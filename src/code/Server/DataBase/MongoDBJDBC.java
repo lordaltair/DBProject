@@ -111,7 +111,7 @@ public class MongoDBJDBC
 
     }
     void add_a_user(String FirstName, String LastName, String UserName,
-                    String Password, String Email, long phone, String biography)
+                    String Password, String Email, String phone, String biography)
     {
         try {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
@@ -160,13 +160,33 @@ public class MongoDBJDBC
             DB db = mongoClient.getDB("Test");
             System.out.println("Connect to database successfully");
             DBCollection coll = db.getCollection("Chat");
-            BasicDBObject fields = new BasicDBObject();
+//            BasicDBObject fields = new BasicDBObject();
             BasicDBObject whereQuery = new BasicDBObject();
-            fields.put("A",a.get("UserName"));
-            fields.put("B",b.get("UserName"));
-            DBCursor cursor = coll.find(whereQuery, fields);
-
-
+            whereQuery.put("A",a.get("UserName"));
+            whereQuery.put("B",b.get("UserName"));
+            DBCursor cursor = coll.find(whereQuery);
+            if (cursor.hasNext())//I think it means we found a true document
+            {
+                DBObject tmp = cursor.next();
+                DBObject listItem = new BasicDBObject("Messages", new BasicDBObject("Message",message)
+                        .append("$currentDate", new BasicDBObject("Time", true)));
+                DBObject updateQuery = new BasicDBObject("$push", listItem);
+                coll.update(tmp, updateQuery);
+                return;
+            }
+            whereQuery = new BasicDBObject();
+            whereQuery.put("A",b.get("UserName"));
+            whereQuery.put("B",a.get("UserName"));
+            cursor= coll.find(whereQuery);
+            if (cursor.hasNext())
+            {
+                DBObject tmp = cursor.next();
+                DBObject listItem = new BasicDBObject("Messages", new BasicDBObject("Message",message)
+                        .append("$currentDate", new BasicDBObject("Time", true)));
+                DBObject updateQuery = new BasicDBObject("$push", listItem);
+                coll.update(tmp, updateQuery);
+                return;
+            }
 
 
 
