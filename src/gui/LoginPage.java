@@ -3,6 +3,7 @@ package gui;
 import code.Client.Client;
 import code.PrimitiveClasses.LoginInfo;
 import code.PrimitiveClasses.Profile;
+import code.PrimitiveClasses.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -60,9 +61,6 @@ public class LoginPage {
                         modifiedsentence = jsontonormallogin(modifiedsentence);
 
                         modifiedsentence.trim();
-                        StringBuilder sb = new StringBuilder(modifiedsentence);
-                        sb.deleteCharAt(0);
-                        sb.deleteCharAt(sb.length()-1);
                         if (modifiedsentence.equals("true")) {
                             outToServer.close();
                             inFromServer.close();
@@ -73,6 +71,38 @@ public class LoginPage {
                             String TitleMessaage = "Wrong username or password";
                             JOptionPane.showMessageDialog(null, infoMessage, TitleMessaage, JOptionPane.ERROR_MESSAGE);
                         }
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+
+                }
+            });
+            signInButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    User user = new User();
+                    String str;
+                    user.setUsername("altair");
+                    user.setName("ali");
+
+                    Profile profile = new Profile(user,"hoseinmardy" , "1234" , "a.hoseinmardy@gmail.com" , "44444444" , "salam man shakham");
+
+                    try {
+                        str = signup(profile);
+                        outToServer.writeUTF(str);
+                        str = inFromServer.readUTF();
+                        str = jsontonormallogin(str);
+                        if (str.equals("true")) {
+                            String infoMessage = "You signed Correctly!";
+                            String TitleMessaage = "Welcome!";
+                            JOptionPane.showMessageDialog(null, infoMessage, TitleMessaage, JOptionPane.OK_OPTION);
+                        }
+                        else{
+                            String infoMessage = "You signed Incorrectly! Please Try Again";
+                            String TitleMessaage = "Sorry!";
+                            JOptionPane.showMessageDialog(null, infoMessage, TitleMessaage, JOptionPane.ERROR_MESSAGE);
+                        }
+
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
