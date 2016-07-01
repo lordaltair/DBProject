@@ -1,8 +1,16 @@
 package DataBase;
 
-import com.mongodb.*;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
+import com.mongodb.WriteConcern;
 
+import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.DBCursor;
+import com.mongodb.DBCollection;
+import com.mongodb.ServerAddress;
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -25,7 +33,7 @@ public class MongoDBJDBC {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
         }
     }
-    void retrieveAllDoc()
+    void retriveAllDoc()
     {
         try{
             MongoClient mongoClient = new MongoClient("localhost", 27017);
@@ -101,62 +109,7 @@ public class MongoDBJDBC {
         }
 
     }
-    void myInsertion_Users()
-    {
-        try {
-            MongoClient mongoClient = new MongoClient("localhost", 27017);
-            DB db = mongoClient.getDB("test");
-            System.out.println("Connect to database successfully");
-            DBCollection coll = db.getCollection("User");
-            System.out.println("Collection User selected successfully");
 
-            BasicDBObject doc = new BasicDBObject("ID", 1)
-                    .append("First Name", "Ali")
-                    .append("Last Name", "Morty")
-                    .append("UserName", "AliMorty")
-                    .append("Password", "123")
-                    .append("Email", "mortyaut@gmail.com")
-                    .append("Phone", 256)
-                    .append("Biography", "A Person who is in searching of incredibles")
-                   // .append("PICTURE!!!!",????)
-                    .append("Friend IDs", new BasicDBList())
-                    .append("Group IDs", new BasicDBList())
-                    .append("Channel IDs", new BasicDBList());
-            coll.insert(doc);
-            System.out.println("Document inserted successfully");
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-    }
-    void add_new_user_to_DB (String FirstName, String LastName, String UserName, String Password, String Email,
-                             long phone, String Biography)
-    {
-            try
-            {
-            MongoClient mongoClient = new MongoClient("localhost", 27017);
-            DB db = mongoClient.getDB("test");
-            System.out.println("Connect to database successfully");
-            DBCollection coll = db.getCollection("User");
-            System.out.println("Collection User selected successfully");
-
-            BasicDBObject doc = new BasicDBObject("ID", 1)
-                    .append("First Name", FirstName)
-                    .append("Last Name", LastName)
-                    .append("UserName", UserName)
-                    .append("Password", Password)
-                    .append("Email", Email)
-                    .append("Phone", phone)
-                    .append("Biography", Biography)
-                            // .append("PICTURE!!!!",????)
-                    .append("Friend IDs", new BasicDBList())
-                    .append("Group IDs", new BasicDBList())
-                    .append("Channel IDs", new BasicDBList());
-            coll.insert(doc);
-            System.out.println("Document inserted successfully");
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-    }
 
 
     public static void main( String args[] ) {
@@ -165,7 +118,7 @@ public class MongoDBJDBC {
         //myMongoDBJDBC.insertADocument();
 
 //        myMongoDBJDBC.updateDocument();
-       myMongoDBJDBC.retrieveAllDoc();
+       myMongoDBJDBC.retriveAllDoc();
     }
 
 }
