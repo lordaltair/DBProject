@@ -1,8 +1,6 @@
 package code.Server.DataBase;
 
 import code.PrimitiveClasses.FriendList;
-import code.PrimitiveClasses.Group;
-import code.PrimitiveClasses.User;
 import com.mongodb.*;
 
 import java.net.UnknownHostException;
@@ -11,6 +9,12 @@ public class MongoDBJDBC
 {
     DB db;
     MongoClient mongoClient = null;
+
+    public MongoDBJDBC()
+    {
+        initialization();
+    }
+
     public static void main(String args[])
     {
 
@@ -18,10 +22,7 @@ public class MongoDBJDBC
 
         myMongoDBJDBC.retriveAllDoc();
     }
-    public MongoDBJDBC()
-    {
-        initialization();
-    }
+
     public void connectToDataBase()
     {
         try
@@ -40,13 +41,7 @@ public class MongoDBJDBC
     public void retriveAllDoc()
     {
         MongoClient mongoClient = null;
-        try
-        {
-            mongoClient = new MongoClient("localhost", 27017);
-        } catch (UnknownHostException e)
-        {
-            e.printStackTrace();
-        }
+        mongoClient = new MongoClient("localhost", 27017);
         DB db = mongoClient.getDB("test");
 
 //            boolean auth = db
@@ -183,6 +178,7 @@ public class MongoDBJDBC
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
+
     public FriendList get_friend_list(String UserName)
     {
         try
@@ -191,48 +187,15 @@ public class MongoDBJDBC
 
             BasicDBObject whereQuery = new BasicDBObject();
             whereQuery.put("UserName", UserName);
-            // BasicDBObject fields = new BasicDBObject("UserName", "1");
-            DBCursor cursor = coll.find(whereQuery);
-            if (!cursor.hasNext())
-            {
-                System.err.println("This user can not be found");
-            }
-            FriendList result = new FriendList();
-            DBObject res = cursor.next();
-
-
-            BasicDBList list = (BasicDBList) res.get("Friend IDs");
-            int sizeOfList = list.size();
-            User [] friends = new User[sizeOfList];
-            int index=0;
-            for (Object element : list)
-            {
-                User tmp= new User();
-                tmp.setUsername((String)element);
-                friends[index]=tmp;
-                index++;
-            }
-            result.setFriends(friends);
-            list = (BasicDBList) res.get("Group IDs");
-            sizeOfList = list.size();
-            Group[] groups = new Group[sizeOfList];
-            index=0;
-            for (Object element : list)
-            {
-                User tmp= new User();
-                element.
-                tmp.setUsername((String)element);
-                friends[index]=tmp;
-                index++;
-            }
-            result.setFriends(friends);
-
+            BasicDBObject fields = new BasicDBObject("_id", "1");
+            DBCursor cursor = coll.find(whereQuery, fields);
+            //TODO: what next?
 
 
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-
+        return null;
     }
     public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
     {
@@ -295,24 +258,17 @@ public class MongoDBJDBC
     public String find_username_pass(String username)
     {
         MongoClient mongoClient = null;
-        try
-        {
-            mongoClient = new MongoClient("localhost", 27017);
-            DB db = mongoClient.getDB("test");
-            System.out.println("Connect to database successfully");
-            DBCollection coll = db.getCollection("User");
-            System.out.println("Collection User selected successfully");
-            BasicDBObject whereQuery = new BasicDBObject();
-            whereQuery.put("UserName", username);
-            DBCursor dbObjects = coll.find(whereQuery);
-            if (dbObjects.size() == 0)
-                return null;
-            DBObject next = dbObjects.next();
-            return (String) next.get("Password");
-        } catch (UnknownHostException e)
-        {
-            e.printStackTrace();
-        }
-        return null;
+        mongoClient = new MongoClient("localhost", 27017);
+        DB db = mongoClient.getDB("test");
+        System.out.println("Connect to database successfully");
+        DBCollection coll = db.getCollection("User");
+        System.out.println("Collection User selected successfully");
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("UserName", username);
+        DBCursor dbObjects = coll.find(whereQuery);
+        if (dbObjects.size() == 0)
+            return null;
+        DBObject next = dbObjects.next();
+        return (String) next.get("Password");
     }
 }
