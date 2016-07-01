@@ -28,6 +28,7 @@ public class First
     private JButton moreMessageButton;
     private JButton submitButton;
     private JTextField textField1;
+    private Client client;
 
     public First()
     {
@@ -99,7 +100,7 @@ public class First
             {
                 try
                 {
-                    new Client(finalClientSocket, username, outToServer, inFromServer, First.this);
+                    client = new Client(finalClientSocket, username, outToServer, inFromServer, First.this);
                 } catch (IOException e1)
                 {
                     e1.printStackTrace();
