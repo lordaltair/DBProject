@@ -1,6 +1,9 @@
 package code.Server.DataBase;
 
+import code.PrimitiveClasses.Channel;
 import code.PrimitiveClasses.FriendList;
+import code.PrimitiveClasses.Group;
+import code.PrimitiveClasses.User;
 import com.mongodb.*;
 
 import java.net.UnknownHostException;
@@ -20,7 +23,7 @@ public class MongoDBJDBC
 
         MongoDBJDBC myMongoDBJDBC = new MongoDBJDBC();
 
-        myMongoDBJDBC.retriveAllDoc();
+
     }
 
     public void connectToDataBase()
@@ -38,7 +41,7 @@ public class MongoDBJDBC
         }
     }
 
-    public void retriveAllDoc()
+    public void retriveAllDoc() throws Exception
     {
         MongoClient mongoClient = null;
         mongoClient = new MongoClient("localhost", 27017);
@@ -187,15 +190,81 @@ public class MongoDBJDBC
 
             BasicDBObject whereQuery = new BasicDBObject();
             whereQuery.put("UserName", UserName);
-            BasicDBObject fields = new BasicDBObject("_id", "1");
-            DBCursor cursor = coll.find(whereQuery, fields);
-            //TODO: what next?
+            // BasicDBObject fields = new BasicDBObject("UserName", "1");
+            DBCursor cursor = coll.find(whereQuery);
+            if (!cursor.hasNext())
+            {
+                System.err.println("This user can not be found");
+                return null;
+
+            }
+            FriendList result = new FriendList();
+            DBObject res = cursor.next();
+
+            //set user
+            User user = new User();
+            user.setUsername(UserName);
+            result.setUser(user);
+            //set friends
+            BasicDBList list = (BasicDBList) res.get("Friend IDs");
+            int sizeOfList = list.size();
+            User[] friends = new User[sizeOfList];
+            int index=0;
+            for (Object element : list)
+            {
+                User tmp= new User();
+                tmp.setUsername((String)element);
+                tmp.setName(null);
+                friends[index]=tmp;
+                index++;
+            }
+            result.setFriends(friends);
+
+            //set groups
+            list = (BasicDBList) res.get("Group IDs");
+            sizeOfList = list.size();
+            Group[] groups = new Group[sizeOfList];
+            index=0;
+            for (Object element : list)
+            {
+                Group tmp = null;
+                tmp = new Group((String)element);
+                tmp.setMemmbers(null);
+                groups[index]=tmp;
+                index++;
+            }
+            result.setGroups(groups);
+            //set channels
+            list = (BasicDBList) res.get("Channel IDs");
+            sizeOfList = list.size();
+            Channel[] channels = new Channel[sizeOfList];
+            index=0;
+            for (Object element : list)
+            {
+                Channel tmp = null;
+                tmp = new Channel((String)element);
+                tmp.setAdmin(null);
+                channels[index]=tmp;
+                index++;
+            }
+            result.setGroups(groups);
+
+            //Unknown Chats
+            DBCollection chatCollection=db.getCollection("Chat");
+            BasicDBObject whereQuery_chat = new BasicDBObject();
+            whereQuery_chat.put("A",UserName);
+            DBCursor cursor_chat = coll.find(whereQuery_chat);
+            while (cursor_chat.hasNext())
+            {
+                DBObject tmp = cursor_chat.next();
+                //TODO
+            }
+
 
 
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        return null;
     }
     public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
     {
@@ -255,7 +324,7 @@ public class MongoDBJDBC
     }
 
 
-    public String find_username_pass(String username)
+    public String find_username_pass(String username) throws Exception
     {
         MongoClient mongoClient = null;
         mongoClient = new MongoClient("localhost", 27017);
