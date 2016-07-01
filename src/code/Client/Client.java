@@ -278,7 +278,7 @@ public class Client {
         JSONObject args = new JSONObject();
         args.put("user", user);
 
-        obj.put("command" , SEARCH);
+        obj.put("command" , SEARCH_USER);
         obj.put("arg" , args);
 
         obj.writeJSONString(out);

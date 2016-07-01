@@ -40,7 +40,7 @@ public class LoginPage {
         Socket clientSocket = null;
         try
         {
-            clientSocket = new Socket("localhost", 6789);
+            clientSocket = new Socket("192.168.169.70", 6789);
             DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
             DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
             final Socket finalClientSocket = clientSocket;
