@@ -3,7 +3,6 @@ package code.Client;
 import code.PrimitiveClasses.*;
 import com.google.gson.Gson;
 import gui.First;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -75,22 +74,10 @@ public class Client {
     }
     private Time getmessage(String str) throws IOException {
         Message[] messages;
-        JSONParser parser=new JSONParser();
         Time lasttime = null;
-        try {
-            Object obj = parser.parse(str);
-            JSONArray array = (JSONArray) obj;
-            messages= new Message[array.size()];
-            for(int i=0;i<array.size();i++) {
-                Message message = new Message(null);
-                JSONObject objmessage = (JSONObject) array.get(i);
-                message.parsJsonObj(objmessage);
-                messages[i] = message;
-            }
-            lasttime = messages[messages.length].getTimeSent();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        Conversation conversation = new Gson().fromJson(str, Conversation.class);
+        messages = conversation.getMessages();
+        lasttime = messages[messages.length].getTimeSent();
 
         // ferestadane messages be UI va neshan dadan payam ha
         return lasttime;
@@ -108,12 +95,7 @@ public class Client {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (result.equals("true")) {
-            return true;
-        }
-        else{
-            return false;
-        }
+        return result.equals("true");
     }
 
     private String getfriendlist() throws IOException {
