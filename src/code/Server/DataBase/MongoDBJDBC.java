@@ -1,5 +1,7 @@
 package code.Server.DataBase;
 
+import code.PrimitiveClasses.FriendList;
+import code.PrimitiveClasses.Group;
 import code.PrimitiveClasses.User;
 import com.mongodb.*;
 
@@ -181,7 +183,7 @@ public class MongoDBJDBC
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
-    public void get_friend_list(String UserName)
+    public FriendList get_friend_list(String UserName)
     {
         try
         {
@@ -194,28 +196,43 @@ public class MongoDBJDBC
             if (!cursor.hasNext())
             {
                 System.err.println("This user can not be found");
-                return null;
             }
-
+            FriendList result = new FriendList();
             DBObject res = cursor.next();
+
+
             BasicDBList list = (BasicDBList) res.get("Friend IDs");
             int sizeOfList = list.size();
-            User [] result = new User[sizeOfList];
+            User [] friends = new User[sizeOfList];
             int index=0;
             for (Object element : list)
             {
                 User tmp= new User();
                 tmp.setUsername((String)element);
-                result[index]=tmp;
+                friends[index]=tmp;
                 index++;
             }
+            result.setFriends(friends);
+            list = (BasicDBList) res.get("Group IDs");
+            sizeOfList = list.size();
+            Group[] groups = new Group[sizeOfList];
+            index=0;
+            for (Object element : list)
+            {
+                User tmp= new User();
+                element.
+                tmp.setUsername((String)element);
+                friends[index]=tmp;
+                index++;
+            }
+            result.setFriends(friends);
 
-            return  result;
+
 
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        return null;
+
     }
     public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
     {
