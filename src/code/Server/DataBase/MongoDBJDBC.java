@@ -1,6 +1,8 @@
 package code.Server.DataBase;
 
+import code.PrimitiveClasses.User;
 import com.mongodb.*;
+import org.bson.types.ObjectId;
 
 import java.net.UnknownHostException;
 
@@ -180,7 +182,7 @@ public class MongoDBJDBC
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
-    public void get_friend_list(String UserName)
+    public User[] get_friend_list(String UserName)
     {
         try
         {
@@ -188,15 +190,78 @@ public class MongoDBJDBC
 
             BasicDBObject whereQuery = new BasicDBObject();
             whereQuery.put("UserName", UserName);
-            BasicDBObject fields = new BasicDBObject("_id", "1");
-            DBCursor cursor = coll.find(whereQuery, fields);
-            //TODO: what next?
+           // BasicDBObject fields = new BasicDBObject("UserName", "1");
+            DBCursor cursor = coll.find(whereQuery);
+            if (!cursor.hasNext())
+            {
+                System.err.println("This user can not be found");
+                return null;
+            }
 
+            DBObject res = cursor.next();
+            BasicDBList list = (BasicDBList) res.get("Friend IDs");
+            int sizeOfList = list.size();
+            User [] result = new User[sizeOfList];
+            int index=0;
+            for (Object element : list)
+            {
+                User tmp= new User();
+                tmp.setUsername((String)element);
+                result[index]=tmp;
+                index++;
+            }
+
+            return  result;
 
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
+        return null;
+
     }
+    public void add_a_massage_to_chat(String aUserName, String bUserName, String message)
+{
+    try {
+        MongoClient mongoClient = new MongoClient("localhost", 27017);
+        DB db = mongoClient.getDB("Test");
+        System.out.println("Connect to database successfully");
+        DBCollection coll = db.getCollection("Chat");
+//            BasicDBObject fields = new BasicDBObject();
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("A",aUserName);
+        whereQuery.put("B",bUserName);
+        DBCursor cursor = coll.find(whereQuery);
+        if (cursor.hasNext())//I think it means we found a true document
+        {
+            DBObject tmp = cursor.next();
+            DBObject listItem = new BasicDBObject("Messages", new BasicDBObject("Message",message)
+                    .append("$currentDate", new BasicDBObject("Time", true)));
+            DBObject updateQuery = new BasicDBObject("$push", listItem);
+            coll.update(tmp, updateQuery);
+            return;
+        }
+        whereQuery = new BasicDBObject();
+        whereQuery.put("A",bUserName);
+        whereQuery.put("B",aUserName);
+        cursor= coll.find(whereQuery);
+        if (cursor.hasNext())
+        {
+            DBObject tmp = cursor.next();
+            DBObject listItem = new BasicDBObject("Messages", new BasicDBObject("Message",message)
+                    .append("$currentDate", new BasicDBObject("Time", true)));
+            DBObject updateQuery = new BasicDBObject("$push", listItem);
+            coll.update(tmp, updateQuery);
+            return;
+        }
+
+
+
+
+    } catch (Exception e) {
+        System.err.println(e.getClass().getName() + ": " + e.getMessage());
+    }
+
+}
     public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
     {
         try {
@@ -277,5 +342,30 @@ public class MongoDBJDBC
             e.printStackTrace();
         }
         return null;
+    }
+    public void unfriend (String aUserName, String bUserName) // remove b from a's friend list
+    {
+        try
+        {
+            DBCollection coll = db.getCollection("User");
+            BasicDBObject whereQuery = new BasicDBObject();
+            whereQuery.put("UserName", aUserName);
+            DBCursor cursor = coll.find(whereQuery);
+            if (!cursor.hasNext())
+            {
+                System.err.println("This user can not be found");
+                return;
+            }
+            DBObject
+
+            BasicDBObject match = new BasicDBObject("_id", "1"); // to match your document
+            BasicDBObject update = new BasicDBObject("itemList", new BasicDBObject("itemID", "1")));
+            coll.update(match, new BasicDBObject("$pull", update);
+
+        }
+        catch (Exception e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
     }
 }
