@@ -8,6 +8,7 @@ public class LoginInfo implements JsonParsable{
 
     public LoginInfo()
     {
+
     }
 
     public LoginInfo(String username, String password)

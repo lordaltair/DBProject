@@ -37,7 +37,7 @@ public class CommandParser
             methods[COMMAND_CODES.CLIENT_UNMENTION] = CommandParser.class.getMethod("CLIENT_UNMENTION", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.SEARCH_QUERY] = CommandParser.class.getMethod("SEARCH_QUERY", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.SEARCH_USER] = CommandParser.class.getMethod("SEARCH_USER", JSONObject.class, ClientTCPConnection.class);
-            methods[COMMAND_CODES.ADD_TO_FREIND_LIST] = CommandParser.class.getMethod("ADD_TO_FREIND_LIST", JSONObject.class, ClientTCPConnection.class);
+            methods[COMMAND_CODES.ADD_TO_FRIEND_LIST] = CommandParser.class.getMethod("ADD_TO_FRIEND_LIST", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.CREATE_GROUP] = CommandParser.class.getMethod("CREATE_GROUP", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.LEAVE_GROUP] = CommandParser.class.getMethod("LEAVE_GROUP", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.CREATE_CHANEL] = CommandParser.class.getMethod("CREATE_CHANEL", JSONObject.class, ClientTCPConnection.class);

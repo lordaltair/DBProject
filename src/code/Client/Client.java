@@ -19,12 +19,10 @@ public class Client {
     FriendList friendlist;
     String clientname;
     Time lassttime;
-    public Client(Socket clientSocket , String username) throws IOException {
+    public Client(Socket clientSocket , String username , DataOutputStream outToServer , DataInputStream inFromServer) throws IOException {
         //initial variables
         String modifiedSentence;
         this.clientname = username;
-        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-        DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
 
         modifiedSentence=getfriendlist();
         outToServer.writeUTF(modifiedSentence);
@@ -291,22 +289,30 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 15);
-        obj.put("arg1" , query);
+        Query q = new Query(query);
+        JSONObject args = new JSONObject();
+        args.put("query", q);
+
+        obj.put("command" , SEARCH_QUERY);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
         return result;
     }
 
-    private String addtofriend(String me,String username) throws IOException {
+    private String addtofriend(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 16);
-        obj.put("arg1" , me);
-        obj.put("arg1" , username);
+        User user = new User();
+        user.setUsername(username);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
+
+        obj.put("command" , ADD_TO_FRIEND_LIST);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -318,27 +324,28 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 17);
-        obj.put("arg1" , group);
+        JSONObject args = new JSONObject();
+        args.put("group", group);
+
+        obj.put("command" , CREATE_GROUP);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
         return result;
     }
 
-    private String leavegroup(String me,String title) throws IOException {
+    private String leavegroup(String title) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        JSONObject object = new JSONObject();
-        object.put("me", me);
-        object.put("title", title);
-        JSONArray array = new JSONArray();
-        array.add(object);
+        Group group = new Group(title);
+        JSONObject args = new JSONObject();
+        args.put("group", group);
 
-        obj.put("command" , 18);
-        obj.put("arg" , array);
+        obj.put("command" , LEAVE_GROUP);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -350,36 +357,45 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 19);
-        obj.put("arg1" , chanel);
+        JSONObject args = new JSONObject();
+        args.put("channel", chanel);
+
+        obj.put("command" , CREATE_CHANEL);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
         return result;
     }
 
-    private String leavechannel(String me,String title) throws IOException {
+    private String leavechannel(String title) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 20);
-        obj.put("arg1" , me);
-        obj.put("arg2" , title);
+        Chanel channel = new Chanel(title);
+        JSONObject args = new JSONObject();
+        args.put("channel", channel);
+
+        obj.put("command" , LEAVE_CHANEL);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
         return result;
     }
 
-    private String updateprofile(String me,Profile profile) throws IOException {
+    private String updateprofile(Profile profile) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 21);
-        obj.put("arg1" , me);
-        obj.put("arg2" , profile);
+        JSONObject args = new JSONObject();
+
+        args.put("profile", profile.toJsonObj());
+
+        obj.put("command" , UPDATE_PROFILE);
+        obj.put("arg" , args);
 
         obj.writeJSONString(out);
         result = out.toString();
@@ -391,7 +407,8 @@ public class Client {
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
 
-        obj.put("command" , 24);
+        obj.put("command" , LOGOUT);
+        obj.put("arg" , null);
 
         obj.writeJSONString(out);
         result = out.toString();

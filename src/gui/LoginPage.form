@@ -17,7 +17,7 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Password"/>
+          <text value="1234"/>
         </properties>
       </component>
       <component id="34501" class="javax.swing.JButton" binding="loginButton" default-binding="true">
@@ -46,7 +46,7 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Username"/>
+          <text value="altair"/>
         </properties>
       </component>
     </children>
