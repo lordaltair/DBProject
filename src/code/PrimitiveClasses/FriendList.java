@@ -7,6 +7,7 @@ public class FriendList
     private User[] unknownFriends;
     private Group[] groups;
     private Chanel[] chanels;
+    private PrivateChat[] privateChats;
 
     public User getUser()
     {

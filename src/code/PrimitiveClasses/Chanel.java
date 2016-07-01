@@ -2,17 +2,11 @@ package code.PrimitiveClasses;
 
 public class Chanel extends BasicChat
 {
-    private User members[];
     private User admin;
 
-    public User[] getMembers()
+    public Chanel(String title, User[] members)
     {
-        return members;
-    }
-
-    public void setMembers(User[] members)
-    {
-        this.members = members;
+        super(title, members);
     }
 
     public User getAdmin()
