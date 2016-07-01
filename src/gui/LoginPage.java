@@ -29,15 +29,6 @@ public class LoginPage {
     private String Username;
     private String Password;
 
-<<<<<<< HEAD
-    public LoginPage() throws IOException {
-
-        final Socket clientSocket = new Socket("localhost", 6789);
-        final DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-        final DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
-
-        while(true) {
-=======
     public LoginPage()
     {
 
@@ -48,7 +39,6 @@ public class LoginPage {
             DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
             DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
             final Socket finalClientSocket = clientSocket;
->>>>>>> origin/master
             loginButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
