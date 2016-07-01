@@ -51,11 +51,28 @@ public class Client {
         this.friendlist = gson.fromJson(jsonobj.toString(), FriendList.class);
         ui.updateFriendList(friendlist);
 
+
         //insert kardan friendlist be UI
         // va sepas kole ui ra inja neshan bedahim
 
+        //inja ui hazer oomade
+
     }
 
+    private int getdeletetime(String str){
+        JSONParser parser=new JSONParser();
+        int deletetime;
+        Object obj = null;
+        try {
+            obj = parser.parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        JSONObject jsonobj = (JSONObject)obj;
+        String timestr = jsonobj.get("time").toString();
+        deletetime = Integer.parseInt(timestr);
+        return deletetime;
+    }
     private Time getmessage(String str) throws IOException {
         Message[] messages;
         JSONParser parser=new JSONParser();
@@ -77,6 +94,26 @@ public class Client {
 
         // ferestadane messages be UI va neshan dadan payam ha
         return lasttime;
+    }
+
+    private boolean ackjsontonormal(String sendrecievestr) {
+        String result = null;
+        JSONParser parser = new JSONParser();
+
+        try {
+            System.out.println(sendrecievestr);
+            Object obj = parser.parse(sendrecievestr);
+            JSONObject obj2 = (JSONObject) obj;
+            result = obj2.get("ack").toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (result.equals("true")) {
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     private String getfriendlist() throws IOException {
@@ -264,6 +301,24 @@ public class Client {
         args.put("user", user);
 
         obj.put("command" , CLIENT_MENTION);
+        obj.put("arg" , args);
+
+        obj.writeJSONString(out);
+        result = out.toString();
+        return result;
+    }
+
+    private String clientunmention(String username) throws IOException {
+        String result = null;
+        JSONObject obj = new JSONObject();
+        StringWriter out = new StringWriter();
+
+        User user = new User();
+        user.setUsername(username);
+        JSONObject args = new JSONObject();
+        args.put("user", user);
+
+        obj.put("command" , CLIENT_UNMENTION);
         obj.put("arg" , args);
 
         obj.writeJSONString(out);
