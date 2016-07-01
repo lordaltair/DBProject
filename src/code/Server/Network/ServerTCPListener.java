@@ -32,7 +32,7 @@ public class ServerTCPListener implements Runnable
                 ClientTCPConnection clientTCPConnection =
                         new ClientTCPConnection(connectionSocket.getInputStream(),
                                 connectionSocket.getOutputStream());
-                new Thread(clientTCPConnection).run();
+                new Thread(clientTCPConnection).start();
             } catch (IOException e)
             {
                 e.printStackTrace();
