@@ -286,11 +286,18 @@ public class MongoDBJDBC
         DBObject ors = new BasicDBObject("$or", or);
         and.add(ors);
 
-        and.put("currentDate", BasicDBObjectBuilder.start("$gte", fromDate));
+        and.put("Time", BasicDBObjectBuilder.start("$gte", fromDate));
         DBObject query = new BasicDBObject("$and", and);
-        DBCursor cursor = coll.find(query);
-
-        return null;
+        DBCursor cursor = coll.find(query).sort(new BasicDBObject("Time ", -1)).limit(20);
+        Message[] messages = new Message[cursor.size()];
+        int i = 0;
+        while (cursor.hasNext())
+        {
+            DBObject next = cursor.next();
+            messages[i] = new Message(new User(null, (String) next.get("Sender")), (Time) next.get("Time"), (String) next.get("message"));
+            i++;
+        }
+        return messages;
     }
     public void add_friend (String aUserName, String bUserName)//b will add to a's friend
     {
