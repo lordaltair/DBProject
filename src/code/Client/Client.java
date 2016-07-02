@@ -221,7 +221,7 @@ public class Client {
         return result;
     }
 
-    private String clientsendnewmsg(String username , String str, Time time) throws IOException {
+    public String clientsendnewmsg(String username , String str, Time time) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();

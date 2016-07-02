@@ -1,9 +1,11 @@
 package gui;
 
 import code.Client.Client;
+import code.PrimitiveClasses.FriendList;
 import code.PrimitiveClasses.Profile;
 import code.PrimitiveClasses.User;
 import com.google.gson.Gson;
+import com.sun.xml.internal.org.jvnet.mimepull.CleanUpExecutorFactory;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -13,12 +15,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.TimerTask;
+import java.util.Timer;
 
 /**
  * Created by Ali on 7/2/2016.
  */
 public class ProfilePage {
-    public JPanel ProfPanel;
     private JTextField textField1;
     private JTextField textField2;
     private JPasswordField passwordField1;
@@ -30,8 +33,12 @@ public class ProfilePage {
     private JButton createGroupButton;
     private JButton updateProfileButton;
     private JTextField textField6;
+    public JPanel ProfPanel;
+
+    public Client client;
 
     public ProfilePage(String username , Client client) {
+        this.client = client;
         String command = null;
         try {
 
@@ -74,6 +81,7 @@ public class ProfilePage {
                 profile.setBioDescription(textArea1.getText());
                 profile.setPhoneNumber(textField5.getText());
 
+
                 try {
                     String command = client.updateprofile(profile);
                     client.outToServer.writeUTF(command);
@@ -85,11 +93,6 @@ public class ProfilePage {
 
             }
         });
-    }
-
-    public ProfilePage(MainFrame mainFrame)
-    {
-
     }
 
     private void updateProfilepage(Profile profile) {
