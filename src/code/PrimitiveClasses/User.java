@@ -14,6 +14,8 @@ public class User implements JsonParsable
     }
 
     public User() {
+        name=null;
+        username=null;
 
     }
 

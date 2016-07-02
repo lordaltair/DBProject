@@ -88,8 +88,8 @@ public class CommandParser
     {
         User chatUsername = new User();
         chatUsername.parsJsonObj((JSONObject) args.get("user"));
-        // TODO: 7/1/16 search usernames
-        // TODO: 7/2/16 search group and channel titles
+        // TODO: 7/1/16 search usernames :checked
+        // TODO: 7/2/16 search group and channel titles:checked
         // TODO: 7/2/16 create conversation
         Conversation conversation = null;
         clientTCPConnection.sendObject(conversation);

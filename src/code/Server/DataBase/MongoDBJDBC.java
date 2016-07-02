@@ -266,12 +266,13 @@ public class MongoDBJDBC
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
+    public
     public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
     {
         try {
-            MongoClient mongoClient = new MongoClient("localhost", 27017);
-            DB db = mongoClient.getDB("Test");
-            System.out.println("Connect to database successfully");
+
+
+
             DBCollection coll = db.getCollection("Chat");
 //            BasicDBObject fields = new BasicDBObject();
             BasicDBObject whereQuery = new BasicDBObject();
@@ -320,10 +321,21 @@ public class MongoDBJDBC
         {
             e.printStackTrace();
         }
-
     }
-
-
+    public User searchUserName(String UserName)
+    {
+        DBCollection coll = db.getCollection("User");
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("UserName",UserName);
+        DBCursor cursor = coll.find(whereQuery);
+        if (!cursor.hasNext())
+        {
+            return null;
+        }
+        User usr= new User();
+        usr.setUsername(UserName);
+        return usr;
+    }
     public String find_username_pass(String username) throws Exception
     {
         MongoClient mongoClient = null;
