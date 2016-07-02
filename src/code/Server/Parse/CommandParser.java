@@ -1,12 +1,10 @@
 package code.Server.Parse;
 
 import code.COMMAND_CODES;
-import code.PrimitiveClasses.FriendList;
-import code.PrimitiveClasses.LoginInfo;
-import code.PrimitiveClasses.Profile;
-import code.PrimitiveClasses.User;
+import code.PrimitiveClasses.*;
 import code.Server.DataBase.MongoDBJDBC;
 import code.Server.Network.ClientTCPConnection;
+import code.Server.Network.ServerTCPListener;
 import com.google.gson.Gson;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -30,11 +28,9 @@ public class CommandParser
             methods[COMMAND_CODES.GET_PROFILE_DETAIL] = CommandParser.class.getMethod("GET_PROFILE_DETAIL", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.REPORT] = CommandParser.class.getMethod("REPORT", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.CLIENT_SEND_NEW_MSG] = CommandParser.class.getMethod("CLIENT_SEND_NEW_MSG", JSONObject.class, ClientTCPConnection.class);
-            methods[COMMAND_CODES.SERVER_BROADCAST_NEW_MSG] = CommandParser.class.getMethod("SERVER_BROADCAST_NEW_MSG", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.START_PV_CHAT] = CommandParser.class.getMethod("START_PV_CHAT", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.GET_GROUP_MEMBERS] = CommandParser.class.getMethod("GET_GROUP_MEMBERS", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.CLIENT_MENTION] = CommandParser.class.getMethod("CLIENT_MENTION", JSONObject.class, ClientTCPConnection.class);
-            methods[COMMAND_CODES.SERVER_MENTION] = CommandParser.class.getMethod("SERVER_MENTION", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.CLIENT_UNMENTION] = CommandParser.class.getMethod("CLIENT_UNMENTION", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.SEARCH_QUERY] = CommandParser.class.getMethod("SEARCH_QUERY", JSONObject.class, ClientTCPConnection.class);
             methods[COMMAND_CODES.SEARCH_USER] = CommandParser.class.getMethod("SEARCH_USER", JSONObject.class, ClientTCPConnection.class);
@@ -53,11 +49,11 @@ public class CommandParser
         }
     }
 
-    private MongoDBJDBC dbManager;
+    private MongoDBJDBC mongoDb;
 
     public CommandParser()
     {
-        dbManager = new MongoDBJDBC();
+        mongoDb = new MongoDBJDBC();
     }
 
     public void parse(String command, ClientTCPConnection clientTCPConnection)
@@ -84,55 +80,96 @@ public class CommandParser
     public void GET_FRIEND_LIST(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
         FriendList friendList = null;
-        friendList = dbManager.get_friend_list(clientTCPConnection.getUser().getUsername());
+        friendList = mongoDb.get_friend_list(clientTCPConnection.getUser().getUsername());
         clientTCPConnection.sendObject(friendList);
     }
 
     public void START_CHAT(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-        User user = new User();
-        user.parsJsonObj((JSONObject) args.get("user"));
-        // TODO: 7/1/16 to be done
+        User chatUsername = new User();
+        chatUsername.parsJsonObj((JSONObject) args.get("user"));
+        // TODO: 7/1/16 search usernames
+        // TODO: 7/2/16 search group and channel titles
+        // TODO: 7/2/16 create conversation
+        Conversation conversation = null;
+        clientTCPConnection.sendObject(conversation);
+
     }
 
     public void UNFRIEND(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        User friend = new Gson().fromJson(args.get("user").toString(), User.class);
+        // TODO: 7/2/16 mdb unfriend
+        FriendList friendList = mongoDb.get_friend_list(clientTCPConnection.getUser().getUsername());
+        clientTCPConnection.sendObject(friendList);
     }
 
     public void MORE_MESSAGE(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        MoreMessage moreMessage = new Gson().fromJson(args.get("moremessage").toString(), MoreMessage.class);
+        // TODO: 7/1/16 search usernames
+        // TODO: 7/2/16 search group and channel titles
+        // TODO: 7/2/16 create conversation
+        Conversation conversation = null;
+        clientTCPConnection.sendObject(conversation);
     }
 
     public void GET_PROFILE_DETAIL(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        User user = new Gson().fromJson(args.get("user").toString(), User.class);
+        // TODO: 7/2/16 get profile from mongo
+        Profile profile = null;
+        clientTCPConnection.sendObject(profile);
     }
 
     public void REPORT(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        User user = new Gson().fromJson(args.get("user").toString(), User.class);
+        // TODO: 7/2/16 add to reports
     }
 
     public void CLIENT_SEND_NEW_MSG(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
+        Message message = new Gson().fromJson(args.get("message").toString(), Message.class);
+        for (String token : message.getMsg().split(" "))
+        {
+            if (token.startsWith("@"))
+            {
+                // todo if(database has it username)
+                // mentionUser(dstinatio user, group)
+            }
 
-    }
-
-    public void SERVER_BROADCAST_NEW_MSG(JSONObject args, ClientTCPConnection clientTCPConnection)
-    {
-
+        }
+        // TODO: 7/2/16 add new msg to mongo 
+        // TODO: 7/2/16 create new conversation
+        Conversation conversation = null;
+        // TODO: 7/2/16 get members
+        User[] members = null;
+        for (User member : members)
+        {
+            ClientTCPConnection memberTCPConnection = ServerTCPListener.clients.get(member.getUsername());
+            JSONObject asyncConversatoin = new JSONObject();
+            asyncConversatoin.put("conversation", new Gson().toJson(conversation));
+            memberTCPConnection.sendJsonObj(asyncConversatoin);
+        }
     }
 
     public void START_PV_CHAT(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        User chatUsername = new User();
+        chatUsername.parsJsonObj((JSONObject) args.get("user"));
+        // TODO: 7/1/16 search usernames
+        // TODO: 7/2/16 create conversation
+        Conversation conversation = null;
+        clientTCPConnection.sendObject(conversation);
     }
 
     public void GET_GROUP_MEMBERS(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        User chatUsername = new Gson().fromJson(args.get("user").toString(), User.class);
+        // TODO: 7/2/16 get group members from db
+        Group group = null;
+        clientTCPConnection.sendObject(group);
     }
 
     public void CLIENT_MENTION(JSONObject args, ClientTCPConnection clientTCPConnection)
@@ -140,24 +177,28 @@ public class CommandParser
 
     }
 
-    public void SERVER_MENTION(JSONObject args, ClientTCPConnection clientTCPConnection)
-    {
-
-    }
-
     public void CLIENT_UNMENTION(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
+        User chatUsername = new Gson().fromJson(args.get("mention").toString(), User.class);
+        // TODO: 7/2/16 unmention chat for user
 
     }
 
     public void SEARCH_USER(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
+        User username = new Gson().fromJson(args.get("user").toString(), User.class);
+        // TODO: 7/2/16 find usernames contain username
+        User[] result = null;
+        clientTCPConnection.sendObject(result);
 
     }
 
     public void SEARCH_QUERY(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        Query query = new Gson().fromJson(args.get("query").toString(), Query.class);
+        // TODO: 7/2/16 find usernames with corresponding username
+        User[] result = null;
+        clientTCPConnection.sendObject(result);
     }
 
     public void ADD_TO_FRIEND_LIST(JSONObject args, ClientTCPConnection clientTCPConnection)
@@ -165,43 +206,71 @@ public class CommandParser
         User friend = new User();
         friend.parsJsonObj((JSONObject) args.get("user"));
         // TODO: 7/1/16 add to db
-//        dbManager.add_a_friend(clientTCPConnection.getUser().getUsername(), friend.getUsername());
+//        mongoDb.add_a_friend(clientTCPConnection.getUser().getUsername(), friend.getUsername());
         FriendList friendList = null;
         // TODO: 7/1/16 get friend list
-        Gson gson = new Gson();
         clientTCPConnection.sendObject(friendList);
     }
 
     public void CREATE_GROUP(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        Group group = new Gson().fromJson(args.get("group").toString(), Group.class);
+        // TODO: 7/2/16 add group to db
+        sendFriendListToUsers(group.getMemmbers());
     }
 
     public void LEAVE_GROUP(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
+        Group group = new Gson().fromJson(args.get("group").toString(), Group.class);
+        // TODO: 7/2/16 remove user from group in db
+        // TODO: 7/2/16 get new group members
+        User[] members = null;
+        sendFriendListToUsers(members);
+    }
 
+    private void sendFriendListToUsers(User[] members)
+    {
+        for (User member : members)
+        {
+            FriendList friendList = null;
+            // TODO: 7/1/16 get friend list for member
+            ClientTCPConnection memberTCPConnection = ServerTCPListener.clients.get(member.getUsername());
+            JSONObject asyncConversatoin = new JSONObject();
+            asyncConversatoin.put("friendlist", new Gson().toJson(friendList));
+            memberTCPConnection.sendJsonObj(asyncConversatoin);
+        }
     }
 
     public void CREATE_CHANEL(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        Channel channel = new Gson().fromJson(args.get("channel").toString(), Channel.class);
+        // TODO: 7/2/16 add channel to db
+        sendFriendListToUsers(channel.getMemmbers());
     }
 
     public void LEAVE_CHANEL(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        Channel channel = new Gson().fromJson(args.get("channel").toString(), Channel.class);
+        // TODO: 7/2/16 remove user from channel in db
+        // TODO: 7/2/16 get new channel members
+        User[] members = null;
+        sendFriendListToUsers(members);
     }
 
     public void UPDATE_PROFILE(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        Profile profile = new Gson().fromJson(args.get("profile").toString(), Profile.class);
+        // TODO: 7/2/16 update user profile on db
+        JSONObject response = new JSONObject();
+        response.put("ack", true);
+        clientTCPConnection.sendJsonObj(response);
     }
 
     public void SIGN_UP(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
         Profile profile = new Profile();
         profile.parsJsonObj((JSONObject) args.get("profile"));
-        dbManager.add_a_user(profile.getUser().getName(), profile.getLastName(),
+        mongoDb.add_a_user(profile.getUser().getName(), profile.getLastName(),
                 profile.getUser().getUsername(), profile.getPassword(),
                 profile.getEmail(), profile.getPhoneNumber(), profile.getBioDescription());
         JSONObject response = new JSONObject();
@@ -214,7 +283,13 @@ public class CommandParser
         LoginInfo loginInfo = new LoginInfo();
         loginInfo.parsJsonObj((JSONObject) args.get("logininfo"));
         String pass = null;
-        pass = dbManager.find_username_pass(loginInfo.getUsername());
+        try
+        {
+            pass = mongoDb.find_username_pass(loginInfo.getUsername());
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         JSONObject response = new JSONObject();
         boolean accepted = false;
         if (pass != null && pass.equalsIgnoreCase(loginInfo.getPassword()))
@@ -229,7 +304,10 @@ public class CommandParser
 
     public void LOGOUT(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-
+        User user = new Gson().fromJson(args.get("user").toString(), User.class);
+        ClientTCPConnection removed = ServerTCPListener.clients.remove(user.getUsername());
+        if (removed != null)
+            removed.close();
     }
 
 }

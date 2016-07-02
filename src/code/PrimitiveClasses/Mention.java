@@ -2,20 +2,20 @@ package code.PrimitiveClasses;
 
 public class Mention
 {
-    private BasicChat location;
+    private User chat;
 
-    public Mention(BasicChat location)
+    public Mention(User chat)
     {
-        this.location = location;
+        this.chat = chat;
     }
 
-    public BasicChat getLocation()
+    public User getChat()
     {
-        return location;
+        return chat;
     }
 
-    public void setLocation(BasicChat location)
+    public void setChat(User chat)
     {
-        this.location = location;
+        this.chat = chat;
     }
 }

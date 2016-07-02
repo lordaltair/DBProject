@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 public class Channel extends BasicChat
 {
     private User admin;
+    private User[] memmbers;
 
     public Channel(String title)
     {
@@ -24,6 +25,16 @@ public class Channel extends BasicChat
     public void setAdmin(User admin)
     {
         this.admin = admin;
+    }
+
+    public User[] getMemmbers()
+    {
+        return memmbers;
+    }
+
+    public void setMemmbers(User[] memmbers)
+    {
+        this.memmbers = memmbers;
     }
 
     @Override

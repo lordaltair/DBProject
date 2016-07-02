@@ -107,6 +107,18 @@ public class ClientTCPConnection implements Runnable
     public void setUser(User user)
     {
         this.user = user;
-        // TODO: 7/1/16 add it to logins
+        ServerTCPListener.clients.put(user.getUsername(), this);
+    }
+
+    public void close()
+    {
+        try
+        {
+            new Thread(this).stop();
+            inFromClient.close();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

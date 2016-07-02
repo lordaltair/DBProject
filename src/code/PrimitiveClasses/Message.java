@@ -1,9 +1,6 @@
 package code.PrimitiveClasses;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.sql.Time;
 
@@ -11,6 +8,7 @@ public class Message implements JsonParsable
 {
     User sender;
     Time timeSent;
+    User chatUsername;
     private String msg;
 
     public Message(String msg)
@@ -46,6 +44,16 @@ public class Message implements JsonParsable
     public void setTimeSent(Time timeSent)
     {
         this.timeSent = timeSent;
+    }
+
+    public User getChatUsername()
+    {
+        return chatUsername;
+    }
+
+    public void setChatUsername(User chatUsername)
+    {
+        this.chatUsername = chatUsername;
     }
 
     @Override
