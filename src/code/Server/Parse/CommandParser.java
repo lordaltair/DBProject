@@ -100,12 +100,12 @@ public class CommandParser
         Group group = mongoDb.get_group(chatUsername.getUsername());
         if (group != null)
         {
-            messages = mongoDb.get_group_messages(chatUsername.getUsername(), time);
+//            messages = mongoDb.get_group_messages(chatUsername.getUsername(), time);
         }
         Channel channel = mongoDb.get_channel(chatUsername.getUsername());
         if (channel != null)
         {
-            messages = mongoDb.get_channel_messages(chatUsername.getUsername(), time);
+//            messages = mongoDb.get_channel_messages(chatUsername.getUsername(), time);
         }
         conversation = new Conversation(messages);
         clientTCPConnection.sendObject(conversation);
@@ -134,12 +134,12 @@ public class CommandParser
         Group group = mongoDb.get_group(moreMessage.getUser().getUsername());
         if (group != null)
         {
-            messages = mongoDb.get_group_messages(moreMessage.getUser().getUsername(), time);
+//            messages = mongoDb.get_group_messages(moreMessage.getUser().getUsername(), time);
         }
         Channel channel = mongoDb.get_channel(moreMessage.getUser().getUsername());
         if (channel != null)
         {
-            messages = mongoDb.get_channel_messages(moreMessage.getUser().getUsername(), time);
+//            messages = mongoDb.get_channel_messages(moreMessage.getUser().getUsername(), time);
         }
         conversation = new Conversation(messages);
         clientTCPConnection.sendObject(conversation);
@@ -170,11 +170,35 @@ public class CommandParser
             }
 
         }
+
+        Conversation conversation;
+        User user = mongoDb.searchUserName(message.getChatTitle().getUsername());
+        Message[] messages = null;
+        User[] members = null;
+        Time time = new Time(System.currentTimeMillis());
+        if (user != null)
+        {
+            mongoDb.add_a_massage_to_chat(clientTCPConnection.getUser().getUsername(), message.getChatTitle().getUsername(), message.getMsg());
+            messages = mongoDb.get_chat_messages(message.getChatTitle().getUsername(), clientTCPConnection.getUser().getUsername(), time);
+            members = new User[2];
+            members[0] = clientTCPConnection.getUser();
+            members[1] = new User(null, message.getChatTitle().getUsername());
+        }
+        Group group = mongoDb.get_group(message.getChatTitle().getUsername());
+        if (group != null)
+        {
+//            messages = mongoDb.get_group_messages(moreMessage.getUser().getUsername(), time);
+        }
+        Channel channel = mongoDb.get_channel(message.getChatTitle().getUsername());
+        if (channel != null)
+        {
+//            messages = mongoDb.get_channel_messages(moreMessage.getUser().getUsername(), time);
+        }
+        conversation = new Conversation(messages);
+        clientTCPConnection.sendObject(conversation);
         // TODO: 7/2/16 add new msg to mongo 
         // TODO: 7/2/16 create new conversation
-        Conversation conversation = null;
         // TODO: 7/2/16 get members
-        User[] members = null;
         for (User member : members)
         {
             ClientTCPConnection memberTCPConnection = ServerTCPListener.clients.get(member.getUsername());

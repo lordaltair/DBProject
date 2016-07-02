@@ -8,7 +8,23 @@ public class Message implements JsonParsable
 {
     User sender;
     Time timeSent;
+    User chatTitle;
     private String msg;
+
+    public Message(User sender, Time timeSent, String msg, User chatTitle)
+    {
+        this.sender = sender;
+        this.timeSent = timeSent;
+        this.msg = msg;
+        this.chatTitle = chatTitle;
+    }
+
+    public Message(User sender, Time timeSent, String msg)
+    {
+        this.sender = sender;
+        this.timeSent = timeSent;
+        this.msg = msg;
+    }
 
     public Message(String msg)
     {
@@ -58,5 +74,15 @@ public class Message implements JsonParsable
         setMsg(obj.get("msg").toString());
         setSender(sender);
         setTimeSent(time);
+    }
+
+    public User getChatTitle()
+    {
+        return chatTitle;
+    }
+
+    public void setChatTitle(User chatTitle)
+    {
+        this.chatTitle = chatTitle;
     }
 }
