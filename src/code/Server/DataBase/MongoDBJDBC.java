@@ -312,7 +312,7 @@ public class MongoDBJDBC
         }
         DBObject obj = cursor.next();
         BasicDBList fr = (BasicDBList) obj.get("Friend IDs");
-        for (Object a: fr)//TODO: Obejct?
+        for (Object a: fr)
         {
             if (a.toString().equals(bUserName))
             {
