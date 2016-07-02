@@ -67,17 +67,16 @@ public class ProfilePage {
                 Profile profile = new Profile();
                 User user = new User();
                 user.setName(textField1.getText());
-                user.setUsername(textField3.getText());
+                user.setUsername(textField2.getText());
                 profile.setUser(user);
-                profile.setLastName(textField2.getText());
+                profile.setLastName(textField6.getText());
                 profile.setPassword(passwordField1.getText());
                 profile.setEmail(textField4.getText());
                 profile.setBioDescription(textArea1.getText());
                 profile.setPhoneNumber(textField5.getText());
-                textField6.getText();
 
-                String command = client.updateprofile();
                 try {
+                    String command = client.updateprofile(profile);
                     client.outToServer.writeUTF(command);
                     command = client.inFromServer.readUTF();
                     JOptionPane.showMessageDialog(null, "Profile Updated", "Update", JOptionPane.OK_OPTION);
