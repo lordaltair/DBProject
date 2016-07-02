@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.Socket;
 import java.sql.Time;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -52,11 +53,19 @@ public class First
             }
         });
 
-        privateChatButton.addActionListener(new ActionListener() {
+        submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String username = user.getUsername();
                 try {
-                    client.startchat(user.getUsername());
+                    Date date = new Date();
+                    Time time = new Time(date.getTime());
+                    String command = client.clientsendnewmsg(username,textField1.getText(),time);
+                    client.outToServer.writeUTF(command);
+
+                    command = client.inFromServer.readUTF();
+                    client.lasttime = client.getmessage(command);
+
 
                 } catch (IOException e1) {
                     e1.printStackTrace();
