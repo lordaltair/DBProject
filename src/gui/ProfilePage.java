@@ -16,4 +16,5 @@ public class ProfilePage {
     private JButton createChannelButton;
     private JButton createGroupButton;
     private JButton updateProfileButton;
+    private JTextField textField6;
 }

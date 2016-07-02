@@ -18,7 +18,7 @@ import static code.COMMAND_CODES.*;
 
 public class Client {
 
-    FriendList friendlist;
+    public FriendList friendlist;
     String clientname;
     public Time lasttime;
     First ui;
@@ -102,7 +102,7 @@ public class Client {
         return result.equals("true");
     }
 
-    private String getfriendlist() throws IOException {
+    public String getfriendlist() throws IOException {
         String result;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -137,7 +137,7 @@ public class Client {
         // safe kari badesh biad ke bere toye chat
     }
 
-    private String unfriend(String username) throws IOException {
+    public String unfriend(String username) throws IOException {
         String result;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -162,7 +162,7 @@ public class Client {
 
     }
 
-    private String moremessage(String username , Time time) throws IOException {
+    public String moremessage(String username , Time time) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();

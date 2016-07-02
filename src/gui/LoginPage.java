@@ -85,56 +85,14 @@ public class LoginPage
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    User user = new User();
-                    String str;
-                    user.setUsername("altair");
-                    user.setName("ali");
+                    new Signup(outToServer,inFromServer);
+                }
+            });
 
-                    Profile profile = new Profile(user, "hoseinmardy", "1234", "a.hoseinmardy@gmail.com", "44444444", "salam man shakham");
+            signInButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
 
-                    try
-                    {
-                        str = signup(profile);
-                        outToServer.writeUTF(str);
-                        str = inFromServer.readUTF();
-                        str = jsontonormallogin(str);
-                        if (str.equals("true"))
-                        {
-                            String infoMessage = "You signed Correctly!";
-                            String TitleMessaage = "Welcome!";
-                            JOptionPane.showMessageDialog(null, infoMessage, TitleMessaage, JOptionPane.OK_OPTION);
-                        } else
-                        {
-                            String infoMessage = "You signed Incorrectly! Please Try Again";
-                            String TitleMessaage = "Sorry!";
-                            JOptionPane.showMessageDialog(null, infoMessage, TitleMessaage, JOptionPane.ERROR_MESSAGE);
-                        }
-                        user = new User();
-                        user.setUsername("dani");
-                        user.setName("danial");
-
-                        profile = new Profile(user, "alihoseini", "1234", "d.daniel@gmail.com", "33333333", "salam man noobam");
-
-                        str = signup(profile);
-                        outToServer.writeUTF(str);
-                        str = inFromServer.readUTF();
-                        str = jsontonormallogin(str);
-                        if (str.equals("true"))
-                        {
-                            String infoMessage = "You signed Correctly!";
-                            String TitleMessaage = "Welcome!";
-                            JOptionPane.showMessageDialog(null, infoMessage, TitleMessaage, JOptionPane.OK_OPTION);
-                        } else
-                        {
-                            String infoMessage = "You signed Incorrectly! Please Try Again";
-                            String TitleMessaage = "Sorry!";
-                            JOptionPane.showMessageDialog(null, infoMessage, TitleMessaage, JOptionPane.ERROR_MESSAGE);
-                        }
-
-                    } catch (IOException e1)
-                    {
-                        e1.printStackTrace();
-                    }
 
                 }
             });
@@ -146,7 +104,7 @@ public class LoginPage
 
     }
 
-    private String signup(Profile profile) throws IOException
+    public String signup(Profile profile) throws IOException
     {
         String result;
         JSONObject obj = new JSONObject();

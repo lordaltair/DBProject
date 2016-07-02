@@ -1,20 +1,24 @@
 package gui;
 
 import code.Client.Client;
-import code.PrimitiveClasses.Channel;
-import code.PrimitiveClasses.FriendList;
-import code.PrimitiveClasses.Group;
-import code.PrimitiveClasses.User;
+import code.PrimitiveClasses.*;
+import com.google.gson.Gson;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.Socket;
 import java.sql.Time;
 
@@ -33,6 +37,7 @@ public class First
     private JButton submitButton;
     private JTextField textField1;
     private Client client;
+    public User user;
 
     public First()
     {
@@ -41,13 +46,67 @@ public class First
                 doMouseClicked(me);
             }
         });
+
+        unFriendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String username = user.getUsername();
+                    String command = client.unfriend(username);
+                    client.outToServer.writeUTF(command);
+                    command = client.getfriendlist();
+                    client.outToServer.writeUTF(command);
+
+                    command = client.inFromServer.readUTF();
+                    JSONParser parser=new JSONParser();
+                    Object obj = null;
+                    try {
+                        obj = parser.parse(command);
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
+                    JSONObject jsonobj = (JSONObject) obj;
+
+                    Gson gson = new Gson();
+                    jsonobj.writeJSONString(new StringWriter());
+                    client.friendlist = gson.fromJson(jsonobj.toString(), FriendList.class);
+
+                    username = username + "Your Friend has get unfriended";
+                    JOptionPane.showMessageDialog(null, username, "Unfriended", JOptionPane.OK_OPTION);
+                    updateFriendList(client.friendlist);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        moreMessageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = user.getUsername();
+                try {
+                    String command = client.moremessage(username , client.lasttime);
+                    client.outToServer.writeUTF(command);
+
+                    command = client.inFromServer.readUTF();
+                    client.lasttime = client.getmessage(command);
+
+
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
     }
 
     private void doMouseClicked(MouseEvent me) {
         TreePath tp = chatTree.getPathForLocation(me.getX(), me.getY());
         if (tp != null) {
             try {
+                user.setUsername(tp.toString());
                 client.startchat(tp.toString());
+
                 String str = client.inFromServer.readUTF();
                 client.lasttime = client.getmessage(str);
             } catch (IOException e) {
@@ -55,7 +114,6 @@ public class First
             }
         }
     }
-
     private void createUIComponents()
     {
         // TODO: place custom component creation code here
