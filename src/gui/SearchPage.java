@@ -14,4 +14,9 @@ public class SearchPage {
     private JButton addButton;
     private JButton sendUnknownMessageButton;
     private JTree tree1;
+
+    public SearchPage(MainFrame mainFrame)
+    {
+
+    }
 }

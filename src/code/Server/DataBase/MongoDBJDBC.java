@@ -2,7 +2,6 @@ package code.Server.DataBase;
 
 import code.PrimitiveClasses.*;
 import com.mongodb.*;
-import com.mongodb.util.ObjectSerializer;
 
 import java.sql.Time;
 
@@ -29,7 +28,7 @@ public class MongoDBJDBC
         try
         {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
-            db = mongoClient.getDB("test");
+            db = mongoClient.getDB("Test");
             System.out.println("Connect to database successfully");
 //            boolean auth = db.authenticate("myUser", "myPassword".toCharArray());
 //            System.out.println("Authentication: "+auth);
@@ -43,7 +42,7 @@ public class MongoDBJDBC
     {
         MongoClient mongoClient = null;
         mongoClient = new MongoClient("localhost", 27017);
-        DB db = mongoClient.getDB("test");
+        DB db = mongoClient.getDB("Test");
 
 //            boolean auth = db
 //                    .authenticate("myUserName", "myPassword".toCharArray());
@@ -64,7 +63,7 @@ public class MongoDBJDBC
         try
         {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
-            DB db = mongoClient.getDB("test");
+            DB db = mongoClient.getDB("Test");
             System.out.println("Connect to database successfully");
 //            boolean auth = db.authenticate("myUserName",
 //                    "myPassword".toCharArray());
@@ -89,7 +88,7 @@ public class MongoDBJDBC
         {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
 
-            DB db = mongoClient.getDB("test");
+            DB db = mongoClient.getDB("Test");
 //            boolean auth = db
 //                    .authenticate("myUserName", "myPassword".toCharArray());
 //            System.out.println("Authentication: " + auth);
@@ -123,7 +122,7 @@ public class MongoDBJDBC
     {
         try {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
-            DB db = mongoClient.getDB("test");
+            DB db = mongoClient.getDB("Test");
             System.out.println("Connect to database successfully");
             DBCollection coll = db.getCollection("User");
             System.out.println("Collection User selected successfully");
@@ -148,7 +147,7 @@ public class MongoDBJDBC
 
         try {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
-            DB db = mongoClient.getDB("test");
+            DB db = mongoClient.getDB("Test");
             System.out.println("Connect to database successfully");
             DBCollection coll = db.getCollection("User");
             DBObject find = new BasicDBObject("UserName", aUserName);
@@ -166,7 +165,7 @@ public class MongoDBJDBC
 
         try {
             MongoClient mongoClient = new MongoClient("localhost", 27017);
-            DB db = mongoClient.getDB("test");
+            DB db = mongoClient.getDB("Test");
             System.out.println("Connect to database successfully");
             DBCollection coll = db.getCollection("User");
             DBObject find = new BasicDBObject("UserName", a.get("UserName"));
@@ -182,13 +181,13 @@ public class MongoDBJDBC
 
     public FriendList get_friend_list(String UserName)
     {
+        FriendList result = null;
         try
         {
             DBCollection coll = db.getCollection("User");
 
             BasicDBObject whereQuery = new BasicDBObject();
             whereQuery.put("UserName", UserName);
-            // BasicDBObject fields = new BasicDBObject("UserName", "1");
             DBCursor cursor = coll.find(whereQuery);
             if (!cursor.hasNext())
             {
@@ -196,7 +195,7 @@ public class MongoDBJDBC
                 return null;
 
             }
-            FriendList result = new FriendList();
+            result = new FriendList();
             DBObject res = cursor.next();
 
             //set user
@@ -263,7 +262,7 @@ public class MongoDBJDBC
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
-        return null;
+        return result;
     }
 
     public Message[] get_chat_messages(String UserName1, String UserName2, Time fromDate)
@@ -396,7 +395,7 @@ public class MongoDBJDBC
     {
         MongoClient mongoClient = null;
         mongoClient = new MongoClient("localhost", 27017);
-        DB db = mongoClient.getDB("test");
+        DB db = mongoClient.getDB("Test");
         System.out.println("Connect to database successfully");
         DBCollection coll = db.getCollection("User");
         System.out.println("Collection User selected successfully");

@@ -1,7 +1,10 @@
 package gui;
 
 import code.Client.Client;
-import code.PrimitiveClasses.*;
+import code.PrimitiveClasses.Channel;
+import code.PrimitiveClasses.FriendList;
+import code.PrimitiveClasses.Group;
+import code.PrimitiveClasses.User;
 import com.google.gson.Gson;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -20,27 +23,28 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.Socket;
-import java.sql.Time;
 
 public class First
 {
+    private final MainFrame mainFrame;
     public JPanel firstpanel;
+    public JTextArea textArea1;
+    public User user;
     private JButton searchButton;
     private JButton privateChatButton;
     private JTree chatTree;
     private JButton unFriendButton;
     private JButton loadProfileButton;
     private JButton reportButton;
-    public JTextArea textArea1;
     private JButton profileButton;
     private JButton moreMessageButton;
     private JButton submitButton;
     private JTextField textField1;
     private Client client;
-    public User user;
 
-    public First()
+    public First(MainFrame mainFrame)
     {
+        this.mainFrame = mainFrame;
         chatTree.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent me) {
                 doMouseClicked(me);
@@ -85,6 +89,8 @@ public class First
             public void actionPerformed(ActionEvent e) {
                 String username = user.getUsername();
                 try {
+                    if (client == null)
+                        return;
                     String command = client.moremessage(username , client.lasttime);
                     client.outToServer.writeUTF(command);
 
@@ -100,9 +106,18 @@ public class First
         });
 
         profileButton.addActionListener(new ActionListener() {
-            String username = client.clientname;
             public void actionPerformed(ActionEvent e) {
-                new ProfilePage(username, client);
+                if (client == null)
+                    return;
+                new ProfilePage(client.clientname, client);
+            }
+        });
+        searchButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                mainFrame.gotoFrame(2);
             }
         });
     }
@@ -143,31 +158,41 @@ public class First
 
         DefaultMutableTreeNode uFriends
                 = new DefaultMutableTreeNode("Unknown Friends");
-        for (User ufriend : friendList.getUnknownFriends())
+        if (friendList.getUnknownFriends() != null)
         {
-            DefaultMutableTreeNode temp
-                    = new DefaultMutableTreeNode(ufriend.getUsername());
-            uFriends.add(temp);
+            for (User ufriend : friendList.getUnknownFriends())
+            {
+                DefaultMutableTreeNode temp
+                        = new DefaultMutableTreeNode(ufriend.getUsername());
+                uFriends.add(temp);
+            }
         }
         root.add(uFriends);
 
+
         DefaultMutableTreeNode groups
                 = new DefaultMutableTreeNode("Groups");
-        for (Group group : friendList.getGroups())
+        if (friendList.getGroups() != null)
         {
-            DefaultMutableTreeNode temp
-                    = new DefaultMutableTreeNode(group.getTitle());
-            groups.add(temp);
+            for (Group group : friendList.getGroups())
+            {
+                DefaultMutableTreeNode temp
+                        = new DefaultMutableTreeNode(group.getTitle());
+                groups.add(temp);
+            }
         }
         root.add(groups);
 
         DefaultMutableTreeNode channels
                 = new DefaultMutableTreeNode("Channels");
-        for (Channel channel : friendList.getChannels())
+        if (friendList.getChannels() != null)
         {
-            DefaultMutableTreeNode temp
-                    = new DefaultMutableTreeNode(channel.getTitle());
-            channels.add(temp);
+            for (Channel channel : friendList.getChannels())
+            {
+                DefaultMutableTreeNode temp
+                        = new DefaultMutableTreeNode(channel.getTitle());
+                channels.add(temp);
+            }
         }
         root.add(channels);
 
