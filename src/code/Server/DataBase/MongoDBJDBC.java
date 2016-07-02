@@ -3,7 +3,7 @@ package code.Server.DataBase;
 import code.PrimitiveClasses.*;
 import com.mongodb.*;
 
-import java.net.UnknownHostException;
+import java.sql.Time;
 
 public class MongoDBJDBC
 {
@@ -264,9 +264,30 @@ public class MongoDBJDBC
         }
         return null;
     }
-    public Message[] get_chat_messages (String UserName1, String UserName2)
+
+    public Message[] get_chat_messages(String UserName1, String UserName2, Time fromDate)
     {
-        //TODO
+        DBCollection coll = db.getCollection("Chat");
+        BasicDBList or = new BasicDBList();
+        BasicDBList and = new BasicDBList();
+        BasicDBObject whereQuery1 = new BasicDBObject();
+
+        whereQuery1.put("A", UserName1);
+        whereQuery1.put("B", UserName2);
+        or.add(new BasicDBObject("$and", whereQuery1));
+
+        BasicDBObject whereQuery2 = new BasicDBObject();
+        whereQuery2.put("B", UserName1);
+        whereQuery2.put("A", UserName2);
+        or.add(new BasicDBObject("$and", whereQuery2));
+
+        DBObject ors = new BasicDBObject("$or", or);
+        and.add(ors);
+
+        and.put("currentDate", BasicDBObjectBuilder.start("$gte", fromDate));
+        DBObject query = new BasicDBObject("$and", and);
+        DBCursor cursor = coll.find(query);
+
         return null;
     }
     public void add_a_massage_to_chat(String aUserName, String bUserName, String message)//a is sender
@@ -353,5 +374,48 @@ public class MongoDBJDBC
             return null;
         DBObject next = dbObjects.next();
         return (String) next.get("Password");
+    }
+
+    public Group get_group(String title)
+    {
+        DBCollection coll = db.getCollection("Group");
+        System.out.println("Collection Group selected successfully");
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("Title", title);
+        DBCursor dbObjects = coll.find(whereQuery);
+        if (!dbObjects.hasNext())
+            return null;
+        return new Group(title);
+    }
+
+    public Channel get_channel(String title)
+    {
+        DBCollection coll = db.getCollection("Channel");
+        System.out.println("Collection Channel selected successfully");
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("Title", title);
+        DBCursor dbObjects = coll.find(whereQuery);
+        if (!dbObjects.hasNext())
+            return null;
+        return new Channel(title);
+    }
+
+    public Profile get_user_profile(String username)
+    {
+
+        DBCollection coll = db.getCollection("User");
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("UserName", username);
+        DBCursor cursor = coll.find(whereQuery);
+        if (!cursor.hasNext())
+        {
+            return null;
+        }
+        DBObject next = cursor.next();
+        Profile profile = new Profile(new User((String) next.get("Name"), (String) next.get("UserName")),
+                (String) next.get("LastName"), (String) next.get("Password"),
+                (String) next.get("Email"), (String) next.get("Phone"),
+                (String) next.get("biography"));
+        return profile;
     }
 }

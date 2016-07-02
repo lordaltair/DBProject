@@ -12,6 +12,7 @@ import org.json.simple.parser.ParseException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Time;
 
 public class CommandParser
 {
@@ -88,10 +89,25 @@ public class CommandParser
     {
         User chatUsername = new User();
         chatUsername.parsJsonObj((JSONObject) args.get("user"));
-        // TODO: 7/1/16 search usernames :checked
-        // TODO: 7/2/16 search group and channel titles:checked
-        // TODO: 7/2/16 create conversation
-        Conversation conversation = null;
+        Conversation conversation;
+        User user = mongoDb.searchUserName(chatUsername.getUsername());
+        Message[] messages = null;
+        Time time = new Time(System.currentTimeMillis());
+        if (user != null)
+        {
+            messages = mongoDb.get_chat_messages(chatUsername.getUsername(), clientTCPConnection.getUser().getUsername(), time);
+        }
+        Group group = mongoDb.get_group(chatUsername.getUsername());
+        if (group != null)
+        {
+            messages = mongoDb.get_group_messages(chatUsername.getUsername(), time);
+        }
+        Channel channel = mongoDb.get_channel(chatUsername.getUsername());
+        if (channel != null)
+        {
+            messages = mongoDb.get_channel_messages(chatUsername.getUsername(), time);
+        }
+        conversation = new Conversation(messages);
         clientTCPConnection.sendObject(conversation);
 
     }
@@ -107,18 +123,32 @@ public class CommandParser
     public void MORE_MESSAGE(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
         MoreMessage moreMessage = new Gson().fromJson(args.get("moremessage").toString(), MoreMessage.class);
-        // TODO: 7/1/16 search usernames
-        // TODO: 7/2/16 search group and channel titles
-        // TODO: 7/2/16 create conversation
         Conversation conversation = null;
+        User user = mongoDb.searchUserName(moreMessage.getUser().getUsername());
+        Message[] messages = null;
+        Time time = moreMessage.getLasttime();
+        if (user != null)
+        {
+            messages = mongoDb.get_chat_messages(moreMessage.getUser().getUsername(), clientTCPConnection.getUser().getUsername(), time);
+        }
+        Group group = mongoDb.get_group(moreMessage.getUser().getUsername());
+        if (group != null)
+        {
+            messages = mongoDb.get_group_messages(moreMessage.getUser().getUsername(), time);
+        }
+        Channel channel = mongoDb.get_channel(moreMessage.getUser().getUsername());
+        if (channel != null)
+        {
+            messages = mongoDb.get_channel_messages(moreMessage.getUser().getUsername(), time);
+        }
+        conversation = new Conversation(messages);
         clientTCPConnection.sendObject(conversation);
     }
 
     public void GET_PROFILE_DETAIL(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
         User user = new Gson().fromJson(args.get("user").toString(), User.class);
-        // TODO: 7/2/16 get profile from mongo
-        Profile profile = null;
+        Profile profile = mongoDb.get_user_profile(user.getUsername());
         clientTCPConnection.sendObject(profile);
     }
 
