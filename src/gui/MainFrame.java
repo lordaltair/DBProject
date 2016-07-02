@@ -52,4 +52,29 @@ public class MainFrame
         MainPanel.repaint();
         MainPanel.setVisible(true);
     }
+
+    public LoginPage getLoginPage()
+    {
+        return loginPage;
+    }
+
+    public First getFirstPage()
+    {
+        return firstPage;
+    }
+
+    public ProfilePage getProfilepage()
+    {
+        return profilepage;
+    }
+
+    public SearchPage getSearchpage()
+    {
+        return searchpage;
+    }
+
+    public Signup getSignup()
+    {
+        return signup;
+    }
 }

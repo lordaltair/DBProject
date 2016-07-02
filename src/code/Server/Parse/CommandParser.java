@@ -65,13 +65,7 @@ public class CommandParser
             JSONObject obj = (JSONObject) parser.parse(command);
             int commCode = Integer.parseInt(String.valueOf(obj.get("command")));
             methods[commCode].invoke(this, obj.get("arg"), clientTCPConnection);
-        } catch (ParseException e)
-        {
-            e.printStackTrace();
-        } catch (InvocationTargetException e)
-        {
-            e.printStackTrace();
-        } catch (IllegalAccessException e)
+        } catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -87,8 +81,7 @@ public class CommandParser
 
     public void START_CHAT(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-        User chatUsername = new User();
-        chatUsername.parsJsonObj((JSONObject) args.get("user"));
+        User chatUsername = new Gson().fromJson(args.get("user").toString(), User.class);
         Conversation conversation;
         User user = mongoDb.searchUserName(chatUsername.getUsername());
         Message[] messages = null;
@@ -196,15 +189,15 @@ public class CommandParser
         }
         conversation = new Conversation(messages);
         clientTCPConnection.sendObject(conversation);
-        // TODO: 7/2/16 add new msg to mongo 
+        // TODO: 7/2/16 add new msg to mongo
         // TODO: 7/2/16 create new conversation
         // TODO: 7/2/16 get members
         for (User member : members)
         {
             ClientTCPConnection memberTCPConnection = ServerTCPListener.clients.get(member.getUsername());
-            JSONObject asyncConversatoin = new JSONObject();
-            asyncConversatoin.put("conversation", new Gson().toJson(conversation));
-            memberTCPConnection.sendJsonObj(asyncConversatoin);
+//            JSONObject asyncConversatoin = new JSONObject();
+//            asyncConversatoin.put("conversation", new Gson().toJson(conversation));
+            memberTCPConnection.sendObject(conversation);
         }
     }
 
@@ -241,8 +234,7 @@ public class CommandParser
     public void SEARCH_USER(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
         User username = new Gson().fromJson(args.get("user").toString(), User.class);
-        // TODO: 7/2/16 find usernames contain username
-        User[] result = null;
+        User[] result = mongoDb.search_userName(username.getUsername());
         clientTCPConnection.sendObject(result);
 
     }
@@ -257,12 +249,9 @@ public class CommandParser
 
     public void ADD_TO_FRIEND_LIST(JSONObject args, ClientTCPConnection clientTCPConnection)
     {
-        User friend = new User();
-        friend.parsJsonObj((JSONObject) args.get("user"));
-        // TODO: 7/1/16 add to db
-//        mongoDb.add_a_friend(clientTCPConnection.getUser().getUsername(), friend.getUsername());
-        FriendList friendList = null;
-        // TODO: 7/1/16 get friend list
+        User friend = new Gson().fromJson(args.get("user").toString(), User.class);
+        mongoDb.add_friend(clientTCPConnection.getUser().getUsername(), friend.getUsername());
+        FriendList friendList = mongoDb.get_friend_list(clientTCPConnection.getUser().getUsername());
         clientTCPConnection.sendObject(friendList);
     }
 
@@ -289,9 +278,9 @@ public class CommandParser
             FriendList friendList = null;
             // TODO: 7/1/16 get friend list for member
             ClientTCPConnection memberTCPConnection = ServerTCPListener.clients.get(member.getUsername());
-            JSONObject asyncConversatoin = new JSONObject();
-            asyncConversatoin.put("friendlist", new Gson().toJson(friendList));
-            memberTCPConnection.sendJsonObj(asyncConversatoin);
+//            JSONObject asyncConversatoin = new JSONObject();
+//            asyncConversatoin.put("friendlist", new Gson().toJson(friendList));
+            memberTCPConnection.sendObject(friendList);
         }
     }
 

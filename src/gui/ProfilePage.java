@@ -95,6 +95,11 @@ public class ProfilePage {
         });
     }
 
+    public ProfilePage(MainFrame mainFrame)
+    {
+
+    }
+
     private void updateProfilepage(Profile profile) {
         textField1.setText(profile.getUser().getName());
         textField2.setText(profile.getUser().getUsername());

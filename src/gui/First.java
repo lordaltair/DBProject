@@ -21,12 +21,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.Socket;
 import java.sql.Time;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class First
 {
+    private final MainFrame mainFrame;
     public JPanel firstpanel;
     private JButton searchButton;
     private JButton privateChatButton;
@@ -42,36 +40,16 @@ public class First
     private Client client;
     public User user;
 
-    public First()
+    public First(MainFrame mainFrame)
     {
-        Timer timer = new Timer();
-        timer.schedule(new RemindTask(client,client.inFromServer,client.outToServer), 2500);
-
+        user = new User();
+        this.mainFrame = mainFrame;
         chatTree.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent me) {
                 doMouseClicked(me);
             }
         });
 
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = user.getUsername();
-                try {
-                    Date date = new Date();
-                    Time time = new Time(date.getTime());
-                    String command = client.clientsendnewmsg(username,textField1.getText(),time);
-                    client.outToServer.writeUTF(command);
-
-                    command = client.inFromServer.readUTF();
-                    client.lasttime = client.getmessage(command);
-
-
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        });
         unFriendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -110,6 +88,8 @@ public class First
             public void actionPerformed(ActionEvent e) {
                 String username = user.getUsername();
                 try {
+                    if (client == null)
+                        return;
                     String command = client.moremessage(username , client.lasttime);
                     client.outToServer.writeUTF(command);
 
@@ -125,9 +105,18 @@ public class First
         });
 
         profileButton.addActionListener(new ActionListener() {
-            String username = client.clientname;
             public void actionPerformed(ActionEvent e) {
-                new ProfilePage(username, client);
+                if (client == null)
+                    return;
+                new ProfilePage(client.clientname, client);
+            }
+        });
+        searchButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                mainFrame.gotoFrame(2);
             }
         });
     }
@@ -137,7 +126,9 @@ public class First
         if (tp != null) {
             try {
                 user.setUsername(tp.toString());
-                client.startchat(tp.toString());
+                String tmp =client.startchat(tp.toString());
+                client.outToServer.writeUTF(tmp);
+
 
                 String str = client.inFromServer.readUTF();
                 client.lasttime = client.getmessage(str);
@@ -156,45 +147,58 @@ public class First
         DefaultMutableTreeNode root
                 = new DefaultMutableTreeNode("Chats");
 
-        DefaultMutableTreeNode friends
-                = new DefaultMutableTreeNode("Friends");
-        for (User friend : friendList.getFriends())
+//        DefaultMutableTreeNode friends
+//                = new DefaultMutableTreeNode("Friends");
+        if(friendList.getFriends() != null)
         {
-            DefaultMutableTreeNode temp
-                    = new DefaultMutableTreeNode(friend.getUsername());
-            friends.add(temp);
+            for (User friend : friendList.getFriends())
+            {
+                DefaultMutableTreeNode temp
+                        = new DefaultMutableTreeNode(friend.getUsername());
+                root.add(temp);
+            }
         }
-        root.add(friends);
+//        root.add(friends);
 
-        DefaultMutableTreeNode uFriends
-                = new DefaultMutableTreeNode("Unknown Friends");
-        for (User ufriend : friendList.getUnknownFriends())
+//        DefaultMutableTreeNode uFriends
+//                = new DefaultMutableTreeNode("Unknown Friends");
+        if (friendList.getUnknownFriends() != null)
         {
-            DefaultMutableTreeNode temp
-                    = new DefaultMutableTreeNode(ufriend.getUsername());
-            uFriends.add(temp);
+            for (User ufriend : friendList.getUnknownFriends())
+            {
+                DefaultMutableTreeNode temp
+                        = new DefaultMutableTreeNode(ufriend.getUsername());
+                root.add(temp);
+            }
         }
-        root.add(uFriends);
+//        root.add(uFriends);
 
-        DefaultMutableTreeNode groups
-                = new DefaultMutableTreeNode("Groups");
-        for (Group group : friendList.getGroups())
-        {
-            DefaultMutableTreeNode temp
-                    = new DefaultMutableTreeNode(group.getTitle());
-            groups.add(temp);
-        }
-        root.add(groups);
 
-        DefaultMutableTreeNode channels
-                = new DefaultMutableTreeNode("Channels");
-        for (Channel channel : friendList.getChannels())
+//        DefaultMutableTreeNode groups
+//                = new DefaultMutableTreeNode("Groups");
+        if (friendList.getGroups() != null)
         {
-            DefaultMutableTreeNode temp
-                    = new DefaultMutableTreeNode(channel.getTitle());
-            channels.add(temp);
+            for (Group group : friendList.getGroups())
+            {
+                DefaultMutableTreeNode temp
+                        = new DefaultMutableTreeNode(group.getTitle());
+                root.add(temp);
+            }
         }
-        root.add(channels);
+//        root.add(groups);
+
+//        DefaultMutableTreeNode channels
+//                = new DefaultMutableTreeNode("Channels");
+        if (friendList.getChannels() != null)
+        {
+            for (Channel channel : friendList.getChannels())
+            {
+                DefaultMutableTreeNode temp
+                        = new DefaultMutableTreeNode(channel.getTitle());
+                root.add(temp);
+            }
+        }
+//        root.add(channels);
 
         DefaultTreeModel treeModel = new DefaultTreeModel(root);
         chatTree.setModel(treeModel);
@@ -209,35 +213,8 @@ public class First
             @Override
             public void run()
             {
-                try
-                {
-                    client = new Client(finalClientSocket, username, outToServer, inFromServer, First.this);
-                } catch (IOException e1)
-                {
-                    e1.printStackTrace();
-                }
+                    client = Client.GetInstance(finalClientSocket, username, outToServer, inFromServer, mainFrame);
             }
         }).start();
     }
 }
-
-class RemindTask extends TimerTask {
-    public Client client;
-    public DataInputStream dis;
-    public DataOutputStream dos;
-    public RemindTask(Client client , DataInputStream dis,DataOutputStream dos){
-        this.client = client;
-        this.dis = dis;
-        this.dos = dos;
-        try {
-            String str = dis.readUTF();
-            client.lasttime = client.getmessage(str);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public void run() {
-
-    }
-}
-

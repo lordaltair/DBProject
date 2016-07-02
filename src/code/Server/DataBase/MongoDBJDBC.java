@@ -143,42 +143,6 @@ public class MongoDBJDBC
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
     }
-    public void add_a_friend(String  aUserName, String bUserName)//b = a's friend
-    {
-
-        try {
-            MongoClient mongoClient = new MongoClient("localhost", 27017);
-            DB db = mongoClient.getDB("Test");
-            System.out.println("Connect to database successfully");
-            DBCollection coll = db.getCollection("User");
-            DBObject find = new BasicDBObject("UserName", aUserName);
-            DBObject listItem = new BasicDBObject("Friend IDs", new BasicDBObject("UserName",bUserName));
-            DBObject updateQuery = new BasicDBObject("$push", listItem);
-            coll.update(find, updateQuery);
-
-
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-    }
-    public void add_a_friend(BasicDBObject a, BasicDBObject b)//b = a's friend
-    {
-
-        try {
-            MongoClient mongoClient = new MongoClient("localhost", 27017);
-            DB db = mongoClient.getDB("Test");
-            System.out.println("Connect to database successfully");
-            DBCollection coll = db.getCollection("User");
-            DBObject find = new BasicDBObject("UserName", a.get("UserName"));
-            DBObject listItem = new BasicDBObject("Friend IDs", new BasicDBObject("UserName",b.get("UserName")));
-            DBObject updateQuery = new BasicDBObject("$push", listItem);
-            coll.update(find, updateQuery);
-
-
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-    }
 
     public FriendList get_friend_list(String UserName)
     {
@@ -207,11 +171,11 @@ public class MongoDBJDBC
             BasicDBList list = (BasicDBList) res.get("Friend IDs");
             int sizeOfList = list.size();
             User[] friends = new User[sizeOfList];
-            int index=0;
-            for (Object element : list)
+            for (int index=0; index < list.size(); index++)
             {
+                BasicDBObject element = (BasicDBObject) list.get(index);
                 User tmp= new User();
-                tmp.setUsername((String)element);
+                tmp.setUsername((String) element.get("UserName"));
                 tmp.setName(null);
                 friends[index]=tmp;
                 index++;
@@ -222,11 +186,11 @@ public class MongoDBJDBC
             list = (BasicDBList) res.get("Group IDs");
             sizeOfList = list.size();
             Group[] groups = new Group[sizeOfList];
-            index=0;
-            for (Object element : list)
+            for (int index=0; index < list.size(); index++)
             {
+                BasicDBObject element = (BasicDBObject) list.get(index);
                 Group tmp = null;
-                tmp = new Group((String)element);
+                tmp = new Group((String) element.get("Group ID"));
                 tmp.setMemmbers(null);
                 groups[index]=tmp;
                 index++;
@@ -236,11 +200,11 @@ public class MongoDBJDBC
             list = (BasicDBList) res.get("Channel IDs");
             sizeOfList = list.size();
             Channel[] channels = new Channel[sizeOfList];
-            index=0;
-            for (Object element : list)
+            for (int index=0; index < list.size(); index++)
             {
+                BasicDBObject element = (BasicDBObject) list.get(index);
                 Channel tmp = null;
-                tmp = new Channel((String)element);
+                tmp = new Channel((String) element.get("Channel ID"));
                 tmp.setAdmin(null);
                 channels[index]=tmp;
                 index++;
@@ -323,7 +287,7 @@ public class MongoDBJDBC
     {
         DBCollection coll = db.getCollection("User");
         BasicDBObject whereQuery = new BasicDBObject();
-        whereQuery.put("A",aUserName);
+        whereQuery.put("UserName",aUserName);
         DBCursor cursor = coll.find(whereQuery);
         if (!cursor.hasNext())
         {

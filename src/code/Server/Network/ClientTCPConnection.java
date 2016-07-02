@@ -77,7 +77,10 @@ public class ClientTCPConnection implements Runnable
         try
         {
             if (obj == null)
+            {
+                System.out.println("to send:\tnull");
                 return;
+            }
             Gson gson = new Gson();
             String toJson = gson.toJson(obj);
 //            obj.writeJSONString(new StringWriter());

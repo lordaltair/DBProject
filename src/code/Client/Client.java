@@ -3,6 +3,7 @@ package code.Client;
 import code.PrimitiveClasses.*;
 import com.google.gson.Gson;
 import gui.First;
+import gui.MainFrame;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -21,17 +22,30 @@ public class Client {
     public FriendList friendlist;
     public String clientname;
     public Time lasttime;
-    First ui;
+    MainFrame mainFrame;
     public DataOutputStream outToServer;
     public DataInputStream inFromServer;
+    static Client instance = null;
 
+    public static Client GetInstance(Socket clientSocket, String username, DataOutputStream outToServer, DataInputStream inFromServer, MainFrame mainFrame)
+    {
+        if(instance == null)
+            try
+            {
+                instance = new Client(clientSocket, username, outToServer, inFromServer, mainFrame);
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        return instance;
+    }
 
-    public Client(Socket clientSocket, String username, DataOutputStream outToServer, DataInputStream inFromServer, First ui) throws IOException
+    public Client(Socket clientSocket, String username, DataOutputStream outToServer, DataInputStream inFromServer, MainFrame mainFrame) throws IOException
     {
         //initial variables
         this.outToServer = outToServer;
         this.inFromServer = inFromServer;
-        this.ui = ui;
+        this.mainFrame = mainFrame;
         String modifiedSentence;
         this.clientname = username;
 
@@ -53,12 +67,12 @@ public class Client {
         Gson gson = new Gson();
         jsonobj.writeJSONString(new StringWriter());
         this.friendlist = gson.fromJson(jsonobj.toString(), FriendList.class);
-        ui.updateFriendList(friendlist);
+        mainFrame.getFirstPage().updateFriendList(friendlist);
 
 
     }
 
-    private int getdeletetime(String str){
+    public int getdeletetime(String str){
         JSONParser parser=new JSONParser();
         int deletetime;
         Object obj = null;
@@ -77,17 +91,19 @@ public class Client {
         Time lasttime = null;
         Conversation conversation = new Gson().fromJson(str, Conversation.class);
         messages = conversation.getMessages();
+        if(messages == null)
+            return this.lasttime;
         lasttime = messages[messages.length].getTimeSent();
-        ui.textArea1.setEditable(false);
+        mainFrame.getFirstPage().textArea1.setEditable(false);
         for(int i=0;i<messages.length;i++){
             String strtmp = messages[i].getSender() + " : " + messages[i].getMsg() + "      time : " + messages[i].getTimeSent() + "\n";
-            ui.textArea1.append(strtmp);
+            mainFrame.getFirstPage().textArea1.append(strtmp);
         }
 
         return lasttime;
     }
 
-    private boolean ackjsontonormal(String sendrecievestr) {
+    public boolean ackjsontonormal(String sendrecievestr) {
         String result = null;
         JSONParser parser = new JSONParser();
 
@@ -125,7 +141,7 @@ public class Client {
         User user = new User();
         user.setUsername(username);
         JSONObject args = new JSONObject();
-        args.put("user", user);
+        args.put("user", new Gson().toJson(user));
 
         obj.put("command" , START_CHAT);
         obj.put("arg" , args);
@@ -155,7 +171,7 @@ public class Client {
         return result;
     }
 
-    private void setfriendlist(JSONObject obj) throws IOException {
+    public void setfriendlist(JSONObject obj) throws IOException {
 
         //insert kardan friendlist be UI
         // va sepas kole ui ra inja neshan bedahim
@@ -203,7 +219,7 @@ public class Client {
         return result;
     }
 
-    private String report(String username) throws IOException {
+    public String report(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -242,7 +258,7 @@ public class Client {
         return result;
     }
 
-    private String startprivatechat(String username , int deletetime) throws IOException {
+    public String startpublicchat(String username , int deletetime) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -251,7 +267,7 @@ public class Client {
         user.setUsername(username);
         PrivateChat pv = new PrivateChat(user,deletetime);
         JSONObject args = new JSONObject();
-        args.put("privatechat", pv);
+        args.put("publicchat", pv);
 
         obj.put("command" , START_PV_CHAT);
         obj.put("arg" , args);
@@ -261,7 +277,7 @@ public class Client {
         return result;
     }
 
-//    private String getgrouplist(String me,String username , int deletetime) throws IOException {
+//    public String getgrouplist(String me,String username , int deletetime) throws IOException {
 //        String result = null;
 //        JSONObject obj = new JSONObject();
 //        StringWriter out = new StringWriter();
@@ -276,7 +292,7 @@ public class Client {
 //        return result;
 //    }
 
-    private String clientmention(String username) throws IOException {
+    public String clientmention(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -294,7 +310,7 @@ public class Client {
         return result;
     }
 
-    private String clientunmention(String username) throws IOException {
+    public String clientunmention(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -312,7 +328,7 @@ public class Client {
         return result;
     }
 
-    private String searchuser(String username) throws IOException {
+    public String searchuser(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -320,7 +336,7 @@ public class Client {
         User user = new User();
         user.setUsername(username);
         JSONObject args = new JSONObject();
-        args.put("user", user);
+        args.put("user", new Gson().toJson(user));
 
         obj.put("command" , SEARCH_USER);
         obj.put("arg" , args);
@@ -330,7 +346,7 @@ public class Client {
         return result;
     }
 
-    private String searchquery(String query) throws IOException {
+    public String searchquery(String query) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -347,7 +363,7 @@ public class Client {
         return result;
     }
 
-    private String addtofriend(String username) throws IOException {
+    public String addtofriend(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -355,7 +371,7 @@ public class Client {
         User user = new User();
         user.setUsername(username);
         JSONObject args = new JSONObject();
-        args.put("user", user);
+        args.put("user", new Gson().toJson(user));
 
         obj.put("command" , ADD_TO_FRIEND_LIST);
         obj.put("arg" , args);
@@ -365,7 +381,7 @@ public class Client {
         return result;
     }
 
-    private String creategroup(Group group) throws IOException {
+    public String creategroup(Group group) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -381,7 +397,7 @@ public class Client {
         return result;
     }
 
-    private String leavegroup(String title) throws IOException {
+    public String leavegroup(String title) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -398,7 +414,7 @@ public class Client {
         return result;
     }
 
-    private String createchannel(Channel channel) throws IOException
+    public String createchannel(Channel channel) throws IOException
     {
         String result = null;
         JSONObject obj = new JSONObject();
@@ -415,7 +431,7 @@ public class Client {
         return result;
     }
 
-    private String leavechannel(String title) throws IOException {
+    public String leavechannel(String title) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -449,7 +465,7 @@ public class Client {
         return result;
     }
 
-    private String logout() throws IOException {
+    public String logout() throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
