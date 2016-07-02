@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.Socket;
 import java.sql.Time;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class First
 {
@@ -41,12 +43,26 @@ public class First
 
     public First()
     {
+        Timer timer = new Timer();
+        timer.schedule(new RemindTask(client,client.inFromServer,client.outToServer), 2500);
+
         chatTree.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent me) {
                 doMouseClicked(me);
             }
         });
 
+        privateChatButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    client.startchat(user.getUsername());
+
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
         unFriendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -195,3 +211,24 @@ public class First
         }).start();
     }
 }
+
+class RemindTask extends TimerTask {
+    public Client client;
+    public DataInputStream dis;
+    public DataOutputStream dos;
+    public RemindTask(Client client , DataInputStream dis,DataOutputStream dos){
+        this.client = client;
+        this.dis = dis;
+        this.dos = dos;
+        try {
+            String str = dis.readUTF();
+            client.lasttime = client.getmessage(str);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void run() {
+
+    }
+}
+
