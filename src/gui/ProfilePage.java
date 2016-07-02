@@ -1,7 +1,6 @@
 package gui;
 
 import code.Client.Client;
-import code.PrimitiveClasses.FriendList;
 import code.PrimitiveClasses.Profile;
 import code.PrimitiveClasses.User;
 import com.google.gson.Gson;
@@ -19,6 +18,7 @@ import java.io.StringWriter;
  * Created by Ali on 7/2/2016.
  */
 public class ProfilePage {
+    public JPanel ProfPanel;
     private JTextField textField1;
     private JTextField textField2;
     private JPasswordField passwordField1;
@@ -30,7 +30,6 @@ public class ProfilePage {
     private JButton createGroupButton;
     private JButton updateProfileButton;
     private JTextField textField6;
-    public JPanel ProfPanel;
 
     public ProfilePage(String username , Client client) {
         String command = null;
@@ -87,6 +86,12 @@ public class ProfilePage {
             }
         });
     }
+
+    public ProfilePage(MainFrame mainFrame)
+    {
+
+    }
+
     private void updateProfilepage(Profile profile) {
         textField1.setText(profile.getUser().getName());
         textField2.setText(profile.getUser().getUsername());

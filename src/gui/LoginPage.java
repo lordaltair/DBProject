@@ -2,7 +2,6 @@ package gui;
 
 import code.PrimitiveClasses.LoginInfo;
 import code.PrimitiveClasses.Profile;
-import code.PrimitiveClasses.User;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -85,15 +84,7 @@ public class LoginPage
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    new Signup(outToServer,inFromServer);
-                }
-            });
-
-            signInButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-
-
+                    mainframe.gotoFrame(4);
                 }
             });
         } catch (IOException e)

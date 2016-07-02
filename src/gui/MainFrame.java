@@ -21,15 +21,14 @@ public class MainFrame
     public MainFrame()
     {
         loginPage = new LoginPage(this);
-        firstPage = new First();
-        profilepage = new ProfilePage();
-        searchpage = new SearchPage();
-        signup = new Signup();
+        firstPage = new First(this);
+        profilepage = new ProfilePage(this);
+        searchpage = new SearchPage(this);
+        signup = new Signup(this, loginPage);
         MainPanel.add(loginPage.LoginPanel, "0");
         MainPanel.add(firstPage.firstpanel, "1");
         MainPanel.add(searchpage.LoginPanel, "2");
         MainPanel.add(profilepage.ProfPanel , "3");
-        signup.JP1.add(signup.JP2,"0");
         MainPanel.add(signup.JP1 , "4");
         ((CardLayout) MainPanel.getLayout()).show(MainPanel, "0");
 
@@ -40,6 +39,15 @@ public class MainFrame
         MainPanel.setVisible(false);
         ((CardLayout) MainPanel.getLayout()).next(MainPanel);
         firstPage.startClient(username, finalClientSocket, outToServer, inFromServer);
+        MainPanel.revalidate();
+        MainPanel.repaint();
+        MainPanel.setVisible(true);
+    }
+
+    public void gotoFrame(int number)
+    {
+        MainPanel.setVisible(false);
+        ((CardLayout) MainPanel.getLayout()).show(MainPanel, String.valueOf(number));
         MainPanel.revalidate();
         MainPanel.repaint();
         MainPanel.setVisible(true);

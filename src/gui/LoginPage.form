@@ -35,7 +35,7 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Sign in"/>
+          <text value="Sign up"/>
         </properties>
       </component>
       <component id="7bbd8" class="javax.swing.JTextField" binding="usernameTextField" default-binding="true">
