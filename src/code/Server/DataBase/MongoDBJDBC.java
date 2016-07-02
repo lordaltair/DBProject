@@ -5,6 +5,7 @@ import com.mongodb.*;
 import com.mongodb.util.ObjectSerializer;
 
 import java.sql.Time;
+import java.util.Vector;
 
 public class MongoDBJDBC
 {
@@ -265,7 +266,27 @@ public class MongoDBJDBC
         }
         return null;
     }
-
+    public User[] search_userName (String UserName)
+    {
+        DBCollection coll = db.getCollection("User");
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("UserName", UserName);
+        DBCursor cursor = coll.find(whereQuery);
+        if (!cursor.hasNext())
+        {
+            return null;
+        }
+        Vector<User> res= new Vector<User>();
+        while (cursor.hasNext())
+        {
+            DBObject obj = cursor.next();
+            User tmp = new User();
+            tmp.setUsername(obj.get("UserName").toString());
+            res.add(tmp);
+        }
+        User[] result= res.toArray(new User[res.size()]);
+        return result;
+    }
     public Message[] get_chat_messages(String UserName1, String UserName2, Time fromDate)
     {
         DBCollection coll = db.getCollection("Chat");
