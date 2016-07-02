@@ -22,14 +22,13 @@ public class Signup {
     private JTextField textField1;
     private JTextField textField2;
     private JPasswordField passwordField1;
-    private JTextField textField3;
     private JTextField textField4;
     private JTextArea textArea1;
     private JTextField textField5;
     private JButton signUpButton;
     private JTextField textField6;
-    private JPanel JP1;
-    private JPanel JP2;
+    public JPanel JP1;
+    public JPanel JP2;
 
     private LoginPage lp;
 

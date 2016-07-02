@@ -98,6 +98,13 @@ public class First
 
             }
         });
+
+        profileButton.addActionListener(new ActionListener() {
+            String username = client.clientname;
+            public void actionPerformed(ActionEvent e) {
+                new ProfilePage(username, client);
+            }
+        });
     }
 
     private void doMouseClicked(MouseEvent me) {
