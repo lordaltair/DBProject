@@ -269,7 +269,7 @@ public class MongoDBJDBC
         //TODO
         return null;
     }
-    public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
+    public void add_a_massage_to_chat(String aUserName, String bUserName, String message)//a is sender
     {
         try {
 
@@ -278,27 +278,27 @@ public class MongoDBJDBC
             DBCollection coll = db.getCollection("Chat");
 //            BasicDBObject fields = new BasicDBObject();
             BasicDBObject whereQuery = new BasicDBObject();
-            whereQuery.put("A",a.get("UserName"));
-            whereQuery.put("B",b.get("UserName"));
+            whereQuery.put("A",aUserName);
+            whereQuery.put("B",bUserName);
             DBCursor cursor = coll.find(whereQuery);
             if (cursor.hasNext())//I think it means we found a true document
             {
                 DBObject tmp = cursor.next();
                 DBObject listItem = new BasicDBObject("Messages", new BasicDBObject("Message",message)
-                        .append("$currentDate", new BasicDBObject("Time", true)));
+                        .append("$currentDate", new BasicDBObject("Time", true)).append("Sender", aUserName));
                 DBObject updateQuery = new BasicDBObject("$push", listItem);
                 coll.update(tmp, updateQuery);
                 return;
             }
             whereQuery = new BasicDBObject();
-            whereQuery.put("A",b.get("UserName"));
-            whereQuery.put("B",a.get("UserName"));
+            whereQuery.put("A",bUserName);
+            whereQuery.put("B",aUserName);
             cursor= coll.find(whereQuery);
             if (cursor.hasNext())
             {
                 DBObject tmp = cursor.next();
                 DBObject listItem = new BasicDBObject("Messages", new BasicDBObject("Message",message)
-                        .append("$currentDate", new BasicDBObject("Time", true)));
+                        .append("$currentDate", new BasicDBObject("Time", true)).append("Sender", aUserName));
                 DBObject updateQuery = new BasicDBObject("$push", listItem);
                 coll.update(tmp, updateQuery);
                 return;
