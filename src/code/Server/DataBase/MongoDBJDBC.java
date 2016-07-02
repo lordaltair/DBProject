@@ -1,9 +1,6 @@
 package code.Server.DataBase;
 
-import code.PrimitiveClasses.Channel;
-import code.PrimitiveClasses.FriendList;
-import code.PrimitiveClasses.Group;
-import code.PrimitiveClasses.User;
+import code.PrimitiveClasses.*;
 import com.mongodb.*;
 
 import java.net.UnknownHostException;
@@ -265,8 +262,13 @@ public class MongoDBJDBC
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
+        return null;
     }
-    public
+    public Message[] get_chat_messages (String UserName1, String UserName2)
+    {
+        //TODO
+        return null;
+    }
     public void add_a_massage_to_chat(BasicDBObject a, BasicDBObject b, String message)
     {
         try {
