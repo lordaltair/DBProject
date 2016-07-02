@@ -275,6 +275,7 @@ public class MongoDBJDBC
 
         whereQuery1.put("A", UserName1);
         whereQuery1.put("B", UserName2);
+        //
         or.add(new BasicDBObject("$and", whereQuery1));
 
         BasicDBObject whereQuery2 = new BasicDBObject();
