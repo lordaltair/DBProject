@@ -13,14 +13,24 @@ public class MainFrame
 {
     private final LoginPage loginPage;
     private final First firstPage;
+    private final ProfilePage profilepage;
+    private final SearchPage searchpage;
+    private final Signup signup;
     public JPanel MainPanel;
 
     public MainFrame()
     {
         loginPage = new LoginPage(this);
         firstPage = new First();
+        profilepage = new ProfilePage();
+        searchpage = new SearchPage();
+        signup = new Signup();
         MainPanel.add(loginPage.LoginPanel, "0");
         MainPanel.add(firstPage.firstpanel, "1");
+        MainPanel.add(searchpage.LoginPanel, "2");
+        MainPanel.add(profilepage.ProfPanel , "3");
+        signup.JP1.add(signup.JP2,"0");
+        MainPanel.add(signup.JP1 , "4");
         ((CardLayout) MainPanel.getLayout()).show(MainPanel, "0");
 
     }

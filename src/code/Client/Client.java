@@ -19,7 +19,7 @@ import static code.COMMAND_CODES.*;
 public class Client {
 
     public FriendList friendlist;
-    String clientname;
+    public String clientname;
     public Time lasttime;
     First ui;
     public DataOutputStream outToServer;
@@ -185,7 +185,7 @@ public class Client {
         return result;
     }
 
-    private String getmyprofiledetail(String username) throws IOException {
+    public String getprofiledetail(String username) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
@@ -432,7 +432,7 @@ public class Client {
         return result;
     }
 
-    private String updateprofile(Profile profile) throws IOException {
+    public String updateprofile(Profile profile) throws IOException {
         String result = null;
         JSONObject obj = new JSONObject();
         StringWriter out = new StringWriter();
