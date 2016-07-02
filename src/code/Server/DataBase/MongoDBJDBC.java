@@ -2,6 +2,7 @@ package code.Server.DataBase;
 
 import code.PrimitiveClasses.*;
 import com.mongodb.*;
+import com.mongodb.util.ObjectSerializer;
 
 import java.sql.Time;
 
@@ -289,6 +290,30 @@ public class MongoDBJDBC
         DBCursor cursor = coll.find(query);
 
         return null;
+    }
+    public void add_friend (String aUserName, String bUserName)//b will add to a's friend
+    {
+        DBCollection coll = db.getCollection("User");
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("A",aUserName);
+        DBCursor cursor = coll.find(whereQuery);
+        if (!cursor.hasNext())
+        {
+            System.out.println("UserName "+aUserName+" is not existed");
+            return;
+        }
+        DBObject obj = cursor.next();
+        BasicDBList fr = (BasicDBList) obj.get("Friend IDs");
+        for (Object a: fr)//TODO: Obejct?
+        {
+            if (a.toString().equals(bUserName))
+            {
+                return;
+            }
+        }
+        DBObject listItem = new BasicDBObject("Friend IDs", new BasicDBObject("UserName",bUserName));
+        DBObject updateQuery = new BasicDBObject("$push", listItem);
+        coll.update(obj, updateQuery);
     }
     public void add_a_massage_to_chat(String aUserName, String bUserName, String message)//a is sender
     {
