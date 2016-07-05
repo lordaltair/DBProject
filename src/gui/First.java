@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.Socket;
 import java.sql.Time;
+import java.util.Date;
 
 public class First
 {
@@ -47,6 +48,26 @@ public class First
         chatTree.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent me) {
                 doMouseClicked(me);
+            }
+        });
+
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = user.getUsername();
+                try {
+                    Date date = new Date();
+                    Time time = new Time(date.getTime());
+                    String command = client.clientsendnewmsg(username,textField1.getText(),time);
+                    client.outToServer.writeUTF(command);
+
+                    command = client.inFromServer.readUTF();
+                    client.lasttime = client.getmessage(command);
+
+
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 
@@ -125,7 +146,7 @@ public class First
         TreePath tp = chatTree.getPathForLocation(me.getX(), me.getY());
         if (tp != null) {
             try {
-                user.setUsername(tp.toString());
+                user.setUsername(tp.getLastPathComponent().toString());
                 String tmp =client.startchat(tp.toString());
                 client.outToServer.writeUTF(tmp);
 

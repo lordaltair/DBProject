@@ -248,7 +248,7 @@ public class Client {
         m.setSender(user);
         m.setTimeSent(time);
         JSONObject args = new JSONObject();
-        args.put("message", m);
+        args.put("message", new Gson().toJson(m));
 
         obj.put("command" , CLIENT_SEND_NEW_MSG);
         obj.put("arg" , args);
